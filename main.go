@@ -28,13 +28,15 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
-	if err = server.Start(); err != nil {
-		log.Fatalf("server.Start: %s", err)
-	}
-
-	slog.Info("Shutting down server...")
+	go func() {
+		if err = server.Start(); err != nil {
+			log.Fatalf("server.Start: %s", err)
+		}
+	}()
 
 	<-quit
+
+	slog.Info("Shutting down server...")
 
 	server.GracefulStop()
 
