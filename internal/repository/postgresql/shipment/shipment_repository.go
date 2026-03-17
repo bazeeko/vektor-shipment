@@ -26,6 +26,12 @@ const (
 	querySelectEvents = `SELECT id, shipment_id, status, details, occurred_at
 	FROM public.events
 	WHERE shipment_id = $1`
+
+	querySelectLastEvent = `SELECT id, shipment_id, status, details, occurred_at
+	FROM public.events
+	WHERE shipment_id = $1
+	ORDER BY occurred_at DESC
+	LIMIT 1`
 )
 
 type Repository struct {
@@ -140,4 +146,25 @@ func (r *Repository) SelectEvents(ctx context.Context, shipmentID uuid.UUID) ([]
 	}
 
 	return events, nil
+}
+
+func (r *Repository) SelectLastEvent(ctx context.Context, shipmentID uuid.UUID) (SelectEventOutput, error) {
+	var output SelectEventOutput
+
+	err := r.pool.QueryRow(
+		ctx,
+		querySelectLastEvent,
+		shipmentID,
+	).Scan(
+		&output.ID,
+		output.ShipmentID,
+		&output.Status,
+		&output.Details,
+		output.OccurredAt,
+	)
+	if err != nil {
+		return SelectEventOutput{}, fmt.Errorf("r.pool.QueryRow: %w", err)
+	}
+
+	return output, nil
 }
