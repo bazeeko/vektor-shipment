@@ -1,5 +1,5 @@
-BIN_DIR=${CURDIR}/bin
-VENDOR_PROTO_DIR=${CURDIR}/vendor-proto
+BIN_DIR=${CURDIR}/.local/bin
+VENDOR_PROTO_DIR=${CURDIR}/.local/vendor-proto
 SHIPMENT_PROTO_PATH=api/shipment/v1
 
 google/protobuf:
