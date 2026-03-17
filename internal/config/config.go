@@ -7,7 +7,10 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const envConfigFilePath = "CONFIG_FILE_PATH"
+const (
+	envConfigFilePath     = "CONFIG_FILE_PATH"
+	defaultConfigFilePath = "configs/values.yaml"
+)
 
 type Config struct {
 	Server Server `yaml:"server"`
@@ -18,7 +21,12 @@ type Server struct {
 }
 
 func Load() (*Config, error) {
-	file, err := os.Open(os.Getenv(envConfigFilePath))
+	filePath := os.Getenv(envConfigFilePath)
+	if len(filePath) == 0 {
+		filePath = defaultConfigFilePath
+	}
+
+	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("os.Open: %w", err)
 	}
