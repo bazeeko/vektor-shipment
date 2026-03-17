@@ -1,4 +1,4 @@
-package postgresql
+package shipment
 
 import (
 	"context"
@@ -32,7 +32,7 @@ type Repository struct {
 	pool *pgxpool.Pool
 }
 
-func NewShipmentRepository(pool *pgxpool.Pool) *Repository {
+func New(pool *pgxpool.Pool) *Repository {
 	return &Repository{
 		pool: pool,
 	}

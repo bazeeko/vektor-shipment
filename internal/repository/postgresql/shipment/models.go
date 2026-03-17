@@ -1,4 +1,4 @@
-package postgresql
+package shipment
 
 import (
 	"time"
