@@ -4,7 +4,7 @@
 // - protoc             v3.21.12
 // source: shipment.proto
 
-package shipment
+package shipmentpb
 
 import (
 	context "context"

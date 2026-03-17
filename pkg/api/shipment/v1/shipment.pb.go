@@ -4,7 +4,7 @@
 // 	protoc        v3.21.12
 // source: shipment.proto
 
-package shipment
+package shipmentpb
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -762,7 +762,7 @@ const file_shipment_proto_rawDesc = "" +
 	"\x0eCreateShipment\x12\".shipment.v1.CreateShipmentRequest\x1a#.shipment.v1.CreateShipmentResponse\x12P\n" +
 	"\vGetShipment\x12\x1f.shipment.v1.GetShipmentRequest\x1a .shipment.v1.GetShipmentResponse\x12_\n" +
 	"\x10AddShipmentEvent\x12$.shipment.v1.AddShipmentEventRequest\x1a%.shipment.v1.AddShipmentEventResponse\x12b\n" +
-	"\x11GetShipmentEvents\x12%.shipment.v1.GetShipmentEventsRequest\x1a&.shipment.v1.GetShipmentEventsResponseB*Z(vektor-init/pkg/api/shipment/v1;shipmentb\x06proto3"
+	"\x11GetShipmentEvents\x12%.shipment.v1.GetShipmentEventsRequest\x1a&.shipment.v1.GetShipmentEventsResponseB,Z*vektor-init/pkg/api/shipment/v1;shipmentpbb\x06proto3"
 
 var (
 	file_shipment_proto_rawDescOnce sync.Once

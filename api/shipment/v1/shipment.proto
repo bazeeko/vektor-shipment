@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package shipment.v1;
 
-option go_package = "vektor-init/pkg/api/shipment/v1;shipment";
+option go_package = "vektor-init/pkg/api/shipment/v1;shipmentpb";
 
 import "google/protobuf/timestamp.proto";
 
