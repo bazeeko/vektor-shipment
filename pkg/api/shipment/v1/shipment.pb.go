@@ -25,28 +25,37 @@ const (
 type ShipmentStatus int32
 
 const (
-	ShipmentStatus_SHIPMENT_STATUS_PENDING    ShipmentStatus = 0
-	ShipmentStatus_SHIPMENT_STATUS_PICKED_UP  ShipmentStatus = 1
-	ShipmentStatus_SHIPMENT_STATUS_IN_TRANSIT ShipmentStatus = 2
-	ShipmentStatus_SHIPMENT_STATUS_DELIVERED  ShipmentStatus = 3
-	ShipmentStatus_SHIPMENT_STATUS_CANCELLED  ShipmentStatus = 4
+	ShipmentStatus_SHIPMENT_STATUS_PENDING           ShipmentStatus = 0
+	ShipmentStatus_SHIPMENT_STATUS_AWAITING_DRIVER   ShipmentStatus = 1
+	ShipmentStatus_SHIPMENT_STATUS_PICKED_UP         ShipmentStatus = 2
+	ShipmentStatus_SHIPMENT_STATUS_IN_TRANSIT        ShipmentStatus = 3
+	ShipmentStatus_SHIPMENT_STATUS_DELAYED           ShipmentStatus = 4
+	ShipmentStatus_SHIPMENT_STATUS_AT_TRANSFER_POINT ShipmentStatus = 5
+	ShipmentStatus_SHIPMENT_STATUS_DELIVERED         ShipmentStatus = 6
+	ShipmentStatus_SHIPMENT_STATUS_CANCELLED         ShipmentStatus = 7
 )
 
 // Enum value maps for ShipmentStatus.
 var (
 	ShipmentStatus_name = map[int32]string{
 		0: "SHIPMENT_STATUS_PENDING",
-		1: "SHIPMENT_STATUS_PICKED_UP",
-		2: "SHIPMENT_STATUS_IN_TRANSIT",
-		3: "SHIPMENT_STATUS_DELIVERED",
-		4: "SHIPMENT_STATUS_CANCELLED",
+		1: "SHIPMENT_STATUS_AWAITING_DRIVER",
+		2: "SHIPMENT_STATUS_PICKED_UP",
+		3: "SHIPMENT_STATUS_IN_TRANSIT",
+		4: "SHIPMENT_STATUS_DELAYED",
+		5: "SHIPMENT_STATUS_AT_TRANSFER_POINT",
+		6: "SHIPMENT_STATUS_DELIVERED",
+		7: "SHIPMENT_STATUS_CANCELLED",
 	}
 	ShipmentStatus_value = map[string]int32{
-		"SHIPMENT_STATUS_PENDING":    0,
-		"SHIPMENT_STATUS_PICKED_UP":  1,
-		"SHIPMENT_STATUS_IN_TRANSIT": 2,
-		"SHIPMENT_STATUS_DELIVERED":  3,
-		"SHIPMENT_STATUS_CANCELLED":  4,
+		"SHIPMENT_STATUS_PENDING":           0,
+		"SHIPMENT_STATUS_AWAITING_DRIVER":   1,
+		"SHIPMENT_STATUS_PICKED_UP":         2,
+		"SHIPMENT_STATUS_IN_TRANSIT":        3,
+		"SHIPMENT_STATUS_DELAYED":           4,
+		"SHIPMENT_STATUS_AT_TRANSFER_POINT": 5,
+		"SHIPMENT_STATUS_DELIVERED":         6,
+		"SHIPMENT_STATUS_CANCELLED":         7,
 	}
 )
 
@@ -751,13 +760,16 @@ const file_shipment_proto_rawDesc = "" +
 	"\vshipment_id\x18\x01 \x01(\tR\n" +
 	"shipmentId\"O\n" +
 	"\x19GetShipmentEventsResponse\x122\n" +
-	"\x06events\x18\x01 \x03(\v2\x1a.shipment.v1.ShipmentEventR\x06events*\xaa\x01\n" +
+	"\x06events\x18\x01 \x03(\v2\x1a.shipment.v1.ShipmentEventR\x06events*\x93\x02\n" +
 	"\x0eShipmentStatus\x12\x1b\n" +
-	"\x17SHIPMENT_STATUS_PENDING\x10\x00\x12\x1d\n" +
-	"\x19SHIPMENT_STATUS_PICKED_UP\x10\x01\x12\x1e\n" +
-	"\x1aSHIPMENT_STATUS_IN_TRANSIT\x10\x02\x12\x1d\n" +
-	"\x19SHIPMENT_STATUS_DELIVERED\x10\x03\x12\x1d\n" +
-	"\x19SHIPMENT_STATUS_CANCELLED\x10\x042\x83\x03\n" +
+	"\x17SHIPMENT_STATUS_PENDING\x10\x00\x12#\n" +
+	"\x1fSHIPMENT_STATUS_AWAITING_DRIVER\x10\x01\x12\x1d\n" +
+	"\x19SHIPMENT_STATUS_PICKED_UP\x10\x02\x12\x1e\n" +
+	"\x1aSHIPMENT_STATUS_IN_TRANSIT\x10\x03\x12\x1b\n" +
+	"\x17SHIPMENT_STATUS_DELAYED\x10\x04\x12%\n" +
+	"!SHIPMENT_STATUS_AT_TRANSFER_POINT\x10\x05\x12\x1d\n" +
+	"\x19SHIPMENT_STATUS_DELIVERED\x10\x06\x12\x1d\n" +
+	"\x19SHIPMENT_STATUS_CANCELLED\x10\a2\x83\x03\n" +
 	"\x0fShipmentService\x12Y\n" +
 	"\x0eCreateShipment\x12\".shipment.v1.CreateShipmentRequest\x1a#.shipment.v1.CreateShipmentResponse\x12P\n" +
 	"\vGetShipment\x12\x1f.shipment.v1.GetShipmentRequest\x1a .shipment.v1.GetShipmentResponse\x12_\n" +
