@@ -1,0 +1,29 @@
+version: "3.7"
+
+services:
+  shipment:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "50051:50051"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:16
+    container_name: postgres_shipment
+    volumes:
+      - ./.local/pgdata:/var/lib/postgresql/data
+    restart: always
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=shipment
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U user -d shipment" ]
+      interval: 5s
+      retries: 5
+      timeout: 3s
+    ports:
+      - "5432:5432"
