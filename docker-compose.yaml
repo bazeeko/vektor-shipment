@@ -11,10 +11,10 @@ services:
       - postgres
 
   postgres:
-    image: postgres:16
+    image: postgres:18.1
     container_name: postgres_shipment
     volumes:
-      - ./.local/pgdata:/var/lib/postgresql/data
+      - ./.local/pgdata:/var/lib/postgresql
     restart: always
     environment:
       - POSTGRES_USER=user
