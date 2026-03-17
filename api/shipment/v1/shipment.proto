@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package shipment.v1;
 
-option go_package = "vektor-init/pkg/api/shipment/v1;shipmentpb";
+option go_package = "github.com/bazeeko/vektor-shipment/pkg/api/shipment/v1;shipmentpb";
 
 import "google/protobuf/timestamp.proto";
 
@@ -25,7 +25,7 @@ message Shipment {
   ShipmentStatus status = 5;
   string driver_name = 6;
   string unit_number = 7;
-  int64 shipment_amount = 8;
+  int64 shipment_cost = 8;
   int64 driver_revenue = 9;
   google.protobuf.Timestamp created_at = 10;
   google.protobuf.Timestamp updated_at = 11;
@@ -45,8 +45,8 @@ message CreateShipmentRequest {
   string destination = 3;
   string driver_name = 4;
   string unit_number = 5;
-  int64 shipment_amount_cents = 6;
-  int64 driver_revenue_cents = 7;
+  int64 shipment_cost = 6;
+  int64 driver_revenue = 7;
 }
 
 message CreateShipmentResponse {

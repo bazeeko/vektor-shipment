@@ -95,7 +95,7 @@ type Shipment struct {
 	Status          ShipmentStatus         `protobuf:"varint,5,opt,name=status,proto3,enum=shipment.v1.ShipmentStatus" json:"status,omitempty"`
 	DriverName      string                 `protobuf:"bytes,6,opt,name=driver_name,json=driverName,proto3" json:"driver_name,omitempty"`
 	UnitNumber      string                 `protobuf:"bytes,7,opt,name=unit_number,json=unitNumber,proto3" json:"unit_number,omitempty"`
-	ShipmentAmount  int64                  `protobuf:"varint,8,opt,name=shipment_amount,json=shipmentAmount,proto3" json:"shipment_amount,omitempty"`
+	ShipmentCost    int64                  `protobuf:"varint,8,opt,name=shipment_cost,json=shipmentCost,proto3" json:"shipment_cost,omitempty"`
 	DriverRevenue   int64                  `protobuf:"varint,9,opt,name=driver_revenue,json=driverRevenue,proto3" json:"driver_revenue,omitempty"`
 	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt       *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
@@ -182,9 +182,9 @@ func (x *Shipment) GetUnitNumber() string {
 	return ""
 }
 
-func (x *Shipment) GetShipmentAmount() int64 {
+func (x *Shipment) GetShipmentCost() int64 {
 	if x != nil {
-		return x.ShipmentAmount
+		return x.ShipmentCost
 	}
 	return 0
 }
@@ -287,16 +287,16 @@ func (x *ShipmentEvent) GetOccurredAt() *timestamppb.Timestamp {
 }
 
 type CreateShipmentRequest struct {
-	state               protoimpl.MessageState `protogen:"open.v1"`
-	ReferenceNumber     string                 `protobuf:"bytes,1,opt,name=reference_number,json=referenceNumber,proto3" json:"reference_number,omitempty"`
-	Origin              string                 `protobuf:"bytes,2,opt,name=origin,proto3" json:"origin,omitempty"`
-	Destination         string                 `protobuf:"bytes,3,opt,name=destination,proto3" json:"destination,omitempty"`
-	DriverName          string                 `protobuf:"bytes,4,opt,name=driver_name,json=driverName,proto3" json:"driver_name,omitempty"`
-	UnitNumber          string                 `protobuf:"bytes,5,opt,name=unit_number,json=unitNumber,proto3" json:"unit_number,omitempty"`
-	ShipmentAmountCents int64                  `protobuf:"varint,6,opt,name=shipment_amount_cents,json=shipmentAmountCents,proto3" json:"shipment_amount_cents,omitempty"`
-	DriverRevenueCents  int64                  `protobuf:"varint,7,opt,name=driver_revenue_cents,json=driverRevenueCents,proto3" json:"driver_revenue_cents,omitempty"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	ReferenceNumber string                 `protobuf:"bytes,1,opt,name=reference_number,json=referenceNumber,proto3" json:"reference_number,omitempty"`
+	Origin          string                 `protobuf:"bytes,2,opt,name=origin,proto3" json:"origin,omitempty"`
+	Destination     string                 `protobuf:"bytes,3,opt,name=destination,proto3" json:"destination,omitempty"`
+	DriverName      string                 `protobuf:"bytes,4,opt,name=driver_name,json=driverName,proto3" json:"driver_name,omitempty"`
+	UnitNumber      string                 `protobuf:"bytes,5,opt,name=unit_number,json=unitNumber,proto3" json:"unit_number,omitempty"`
+	ShipmentCost    int64                  `protobuf:"varint,6,opt,name=shipment_cost,json=shipmentCost,proto3" json:"shipment_cost,omitempty"`
+	DriverRevenue   int64                  `protobuf:"varint,7,opt,name=driver_revenue,json=driverRevenue,proto3" json:"driver_revenue,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *CreateShipmentRequest) Reset() {
@@ -364,16 +364,16 @@ func (x *CreateShipmentRequest) GetUnitNumber() string {
 	return ""
 }
 
-func (x *CreateShipmentRequest) GetShipmentAmountCents() int64 {
+func (x *CreateShipmentRequest) GetShipmentCost() int64 {
 	if x != nil {
-		return x.ShipmentAmountCents
+		return x.ShipmentCost
 	}
 	return 0
 }
 
-func (x *CreateShipmentRequest) GetDriverRevenueCents() int64 {
+func (x *CreateShipmentRequest) GetDriverRevenue() int64 {
 	if x != nil {
-		return x.DriverRevenueCents
+		return x.DriverRevenue
 	}
 	return 0
 }
@@ -706,7 +706,7 @@ var File_shipment_proto protoreflect.FileDescriptor
 
 const file_shipment_proto_rawDesc = "" +
 	"\n" +
-	"\x0eshipment.proto\x12\vshipment.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xbc\x03\n" +
+	"\x0eshipment.proto\x12\vshipment.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb8\x03\n" +
 	"\bShipment\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12)\n" +
 	"\x10reference_number\x18\x02 \x01(\tR\x0freferenceNumber\x12\x16\n" +
@@ -716,8 +716,8 @@ const file_shipment_proto_rawDesc = "" +
 	"\vdriver_name\x18\x06 \x01(\tR\n" +
 	"driverName\x12\x1f\n" +
 	"\vunit_number\x18\a \x01(\tR\n" +
-	"unitNumber\x12'\n" +
-	"\x0fshipment_amount\x18\b \x01(\x03R\x0eshipmentAmount\x12%\n" +
+	"unitNumber\x12#\n" +
+	"\rshipment_cost\x18\b \x01(\x03R\fshipmentCost\x12%\n" +
 	"\x0edriver_revenue\x18\t \x01(\x03R\rdriverRevenue\x129\n" +
 	"\n" +
 	"created_at\x18\n" +
@@ -731,7 +731,7 @@ const file_shipment_proto_rawDesc = "" +
 	"\x06status\x18\x03 \x01(\x0e2\x1b.shipment.v1.ShipmentStatusR\x06status\x12\x18\n" +
 	"\adetails\x18\x04 \x01(\tR\adetails\x12;\n" +
 	"\voccurred_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"occurredAt\"\xa4\x02\n" +
+	"occurredAt\"\x8a\x02\n" +
 	"\x15CreateShipmentRequest\x12)\n" +
 	"\x10reference_number\x18\x01 \x01(\tR\x0freferenceNumber\x12\x16\n" +
 	"\x06origin\x18\x02 \x01(\tR\x06origin\x12 \n" +
@@ -739,9 +739,9 @@ const file_shipment_proto_rawDesc = "" +
 	"\vdriver_name\x18\x04 \x01(\tR\n" +
 	"driverName\x12\x1f\n" +
 	"\vunit_number\x18\x05 \x01(\tR\n" +
-	"unitNumber\x122\n" +
-	"\x15shipment_amount_cents\x18\x06 \x01(\x03R\x13shipmentAmountCents\x120\n" +
-	"\x14driver_revenue_cents\x18\a \x01(\x03R\x12driverRevenueCents\"K\n" +
+	"unitNumber\x12#\n" +
+	"\rshipment_cost\x18\x06 \x01(\x03R\fshipmentCost\x12%\n" +
+	"\x0edriver_revenue\x18\a \x01(\x03R\rdriverRevenue\"K\n" +
 	"\x16CreateShipmentResponse\x121\n" +
 	"\bshipment\x18\x01 \x01(\v2\x15.shipment.v1.ShipmentR\bshipment\"5\n" +
 	"\x12GetShipmentRequest\x12\x1f\n" +
@@ -774,7 +774,7 @@ const file_shipment_proto_rawDesc = "" +
 	"\x0eCreateShipment\x12\".shipment.v1.CreateShipmentRequest\x1a#.shipment.v1.CreateShipmentResponse\x12P\n" +
 	"\vGetShipment\x12\x1f.shipment.v1.GetShipmentRequest\x1a .shipment.v1.GetShipmentResponse\x12_\n" +
 	"\x10AddShipmentEvent\x12$.shipment.v1.AddShipmentEventRequest\x1a%.shipment.v1.AddShipmentEventResponse\x12b\n" +
-	"\x11GetShipmentEvents\x12%.shipment.v1.GetShipmentEventsRequest\x1a&.shipment.v1.GetShipmentEventsResponseB,Z*vektor-init/pkg/api/shipment/v1;shipmentpbb\x06proto3"
+	"\x11GetShipmentEvents\x12%.shipment.v1.GetShipmentEventsRequest\x1a&.shipment.v1.GetShipmentEventsResponseBCZAgithub.com/bazeeko/vektor-shipment/pkg/api/shipment/v1;shipmentpbb\x06proto3"
 
 var (
 	file_shipment_proto_rawDescOnce sync.Once
