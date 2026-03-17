@@ -25,37 +25,37 @@ const (
 type ShipmentStatus int32
 
 const (
-	ShipmentStatus_SHIPMENT_STATUS_PENDING           ShipmentStatus = 0
-	ShipmentStatus_SHIPMENT_STATUS_AWAITING_DRIVER   ShipmentStatus = 1
-	ShipmentStatus_SHIPMENT_STATUS_PICKED_UP         ShipmentStatus = 2
-	ShipmentStatus_SHIPMENT_STATUS_IN_TRANSIT        ShipmentStatus = 3
-	ShipmentStatus_SHIPMENT_STATUS_DELAYED           ShipmentStatus = 4
-	ShipmentStatus_SHIPMENT_STATUS_AT_TRANSFER_POINT ShipmentStatus = 5
-	ShipmentStatus_SHIPMENT_STATUS_DELIVERED         ShipmentStatus = 6
-	ShipmentStatus_SHIPMENT_STATUS_CANCELLED         ShipmentStatus = 7
+	ShipmentStatus_Pending         ShipmentStatus = 0
+	ShipmentStatus_AwaitingDriver  ShipmentStatus = 1
+	ShipmentStatus_PickedUp        ShipmentStatus = 2
+	ShipmentStatus_InTransit       ShipmentStatus = 3
+	ShipmentStatus_Delayed         ShipmentStatus = 4
+	ShipmentStatus_AtTransferPoint ShipmentStatus = 5
+	ShipmentStatus_Delivered       ShipmentStatus = 6
+	ShipmentStatus_Cancelled       ShipmentStatus = 7
 )
 
 // Enum value maps for ShipmentStatus.
 var (
 	ShipmentStatus_name = map[int32]string{
-		0: "SHIPMENT_STATUS_PENDING",
-		1: "SHIPMENT_STATUS_AWAITING_DRIVER",
-		2: "SHIPMENT_STATUS_PICKED_UP",
-		3: "SHIPMENT_STATUS_IN_TRANSIT",
-		4: "SHIPMENT_STATUS_DELAYED",
-		5: "SHIPMENT_STATUS_AT_TRANSFER_POINT",
-		6: "SHIPMENT_STATUS_DELIVERED",
-		7: "SHIPMENT_STATUS_CANCELLED",
+		0: "Pending",
+		1: "AwaitingDriver",
+		2: "PickedUp",
+		3: "InTransit",
+		4: "Delayed",
+		5: "AtTransferPoint",
+		6: "Delivered",
+		7: "Cancelled",
 	}
 	ShipmentStatus_value = map[string]int32{
-		"SHIPMENT_STATUS_PENDING":           0,
-		"SHIPMENT_STATUS_AWAITING_DRIVER":   1,
-		"SHIPMENT_STATUS_PICKED_UP":         2,
-		"SHIPMENT_STATUS_IN_TRANSIT":        3,
-		"SHIPMENT_STATUS_DELAYED":           4,
-		"SHIPMENT_STATUS_AT_TRANSFER_POINT": 5,
-		"SHIPMENT_STATUS_DELIVERED":         6,
-		"SHIPMENT_STATUS_CANCELLED":         7,
+		"Pending":         0,
+		"AwaitingDriver":  1,
+		"PickedUp":        2,
+		"InTransit":       3,
+		"Delayed":         4,
+		"AtTransferPoint": 5,
+		"Delivered":       6,
+		"Cancelled":       7,
 	}
 )
 
@@ -94,7 +94,7 @@ type Shipment struct {
 	Destination     string                 `protobuf:"bytes,4,opt,name=destination,proto3" json:"destination,omitempty"`
 	Status          ShipmentStatus         `protobuf:"varint,5,opt,name=status,proto3,enum=shipment.v1.ShipmentStatus" json:"status,omitempty"`
 	DriverName      string                 `protobuf:"bytes,6,opt,name=driver_name,json=driverName,proto3" json:"driver_name,omitempty"`
-	UnitNumber      string                 `protobuf:"bytes,7,opt,name=unit_number,json=unitNumber,proto3" json:"unit_number,omitempty"`
+	UnitId          string                 `protobuf:"bytes,7,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
 	ShipmentCost    int64                  `protobuf:"varint,8,opt,name=shipment_cost,json=shipmentCost,proto3" json:"shipment_cost,omitempty"`
 	DriverRevenue   int64                  `protobuf:"varint,9,opt,name=driver_revenue,json=driverRevenue,proto3" json:"driver_revenue,omitempty"`
 	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
@@ -165,7 +165,7 @@ func (x *Shipment) GetStatus() ShipmentStatus {
 	if x != nil {
 		return x.Status
 	}
-	return ShipmentStatus_SHIPMENT_STATUS_PENDING
+	return ShipmentStatus_Pending
 }
 
 func (x *Shipment) GetDriverName() string {
@@ -175,9 +175,9 @@ func (x *Shipment) GetDriverName() string {
 	return ""
 }
 
-func (x *Shipment) GetUnitNumber() string {
+func (x *Shipment) GetUnitId() string {
 	if x != nil {
-		return x.UnitNumber
+		return x.UnitId
 	}
 	return ""
 }
@@ -269,7 +269,7 @@ func (x *ShipmentEvent) GetStatus() ShipmentStatus {
 	if x != nil {
 		return x.Status
 	}
-	return ShipmentStatus_SHIPMENT_STATUS_PENDING
+	return ShipmentStatus_Pending
 }
 
 func (x *ShipmentEvent) GetDetails() string {
@@ -560,7 +560,7 @@ func (x *AddShipmentEventRequest) GetStatus() ShipmentStatus {
 	if x != nil {
 		return x.Status
 	}
-	return ShipmentStatus_SHIPMENT_STATUS_PENDING
+	return ShipmentStatus_Pending
 }
 
 func (x *AddShipmentEventRequest) GetComment() string {
@@ -706,7 +706,7 @@ var File_shipment_proto protoreflect.FileDescriptor
 
 const file_shipment_proto_rawDesc = "" +
 	"\n" +
-	"\x0eshipment.proto\x12\vshipment.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb8\x03\n" +
+	"\x0eshipment.proto\x12\vshipment.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb0\x03\n" +
 	"\bShipment\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12)\n" +
 	"\x10reference_number\x18\x02 \x01(\tR\x0freferenceNumber\x12\x16\n" +
@@ -714,9 +714,8 @@ const file_shipment_proto_rawDesc = "" +
 	"\vdestination\x18\x04 \x01(\tR\vdestination\x123\n" +
 	"\x06status\x18\x05 \x01(\x0e2\x1b.shipment.v1.ShipmentStatusR\x06status\x12\x1f\n" +
 	"\vdriver_name\x18\x06 \x01(\tR\n" +
-	"driverName\x12\x1f\n" +
-	"\vunit_number\x18\a \x01(\tR\n" +
-	"unitNumber\x12#\n" +
+	"driverName\x12\x17\n" +
+	"\aunit_id\x18\a \x01(\tR\x06unitId\x12#\n" +
 	"\rshipment_cost\x18\b \x01(\x03R\fshipmentCost\x12%\n" +
 	"\x0edriver_revenue\x18\t \x01(\x03R\rdriverRevenue\x129\n" +
 	"\n" +
@@ -760,16 +759,16 @@ const file_shipment_proto_rawDesc = "" +
 	"\vshipment_id\x18\x01 \x01(\tR\n" +
 	"shipmentId\"O\n" +
 	"\x19GetShipmentEventsResponse\x122\n" +
-	"\x06events\x18\x01 \x03(\v2\x1a.shipment.v1.ShipmentEventR\x06events*\x93\x02\n" +
-	"\x0eShipmentStatus\x12\x1b\n" +
-	"\x17SHIPMENT_STATUS_PENDING\x10\x00\x12#\n" +
-	"\x1fSHIPMENT_STATUS_AWAITING_DRIVER\x10\x01\x12\x1d\n" +
-	"\x19SHIPMENT_STATUS_PICKED_UP\x10\x02\x12\x1e\n" +
-	"\x1aSHIPMENT_STATUS_IN_TRANSIT\x10\x03\x12\x1b\n" +
-	"\x17SHIPMENT_STATUS_DELAYED\x10\x04\x12%\n" +
-	"!SHIPMENT_STATUS_AT_TRANSFER_POINT\x10\x05\x12\x1d\n" +
-	"\x19SHIPMENT_STATUS_DELIVERED\x10\x06\x12\x1d\n" +
-	"\x19SHIPMENT_STATUS_CANCELLED\x10\a2\x83\x03\n" +
+	"\x06events\x18\x01 \x03(\v2\x1a.shipment.v1.ShipmentEventR\x06events*\x8e\x01\n" +
+	"\x0eShipmentStatus\x12\v\n" +
+	"\aPending\x10\x00\x12\x12\n" +
+	"\x0eAwaitingDriver\x10\x01\x12\f\n" +
+	"\bPickedUp\x10\x02\x12\r\n" +
+	"\tInTransit\x10\x03\x12\v\n" +
+	"\aDelayed\x10\x04\x12\x13\n" +
+	"\x0fAtTransferPoint\x10\x05\x12\r\n" +
+	"\tDelivered\x10\x06\x12\r\n" +
+	"\tCancelled\x10\a2\x83\x03\n" +
 	"\x0fShipmentService\x12Y\n" +
 	"\x0eCreateShipment\x12\".shipment.v1.CreateShipmentRequest\x1a#.shipment.v1.CreateShipmentResponse\x12P\n" +
 	"\vGetShipment\x12\x1f.shipment.v1.GetShipmentRequest\x1a .shipment.v1.GetShipmentResponse\x12_\n" +

@@ -7,14 +7,14 @@ option go_package = "github.com/bazeeko/vektor-shipment/pkg/api/shipment/v1;ship
 import "google/protobuf/timestamp.proto";
 
 enum ShipmentStatus {
-  SHIPMENT_STATUS_PENDING = 0;
-  SHIPMENT_STATUS_AWAITING_DRIVER = 1;
-  SHIPMENT_STATUS_PICKED_UP = 2;
-  SHIPMENT_STATUS_IN_TRANSIT = 3;
-  SHIPMENT_STATUS_DELAYED = 4;
-  SHIPMENT_STATUS_AT_TRANSFER_POINT = 5;
-  SHIPMENT_STATUS_DELIVERED = 6;
-  SHIPMENT_STATUS_CANCELLED = 7;
+  Pending = 0;
+  AwaitingDriver = 1;
+  PickedUp = 2;
+  InTransit = 3;
+  Delayed = 4;
+  AtTransferPoint = 5;
+  Delivered = 6;
+  Cancelled = 7;
 }
 
 message Shipment {
@@ -24,7 +24,7 @@ message Shipment {
   string destination = 4;
   ShipmentStatus status = 5;
   string driver_name = 6;
-  string unit_number = 7;
+  string unit_id = 7;
   int64 shipment_cost = 8;
   int64 driver_revenue = 9;
   google.protobuf.Timestamp created_at = 10;
