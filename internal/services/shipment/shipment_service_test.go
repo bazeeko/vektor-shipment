@@ -488,112 +488,103 @@ func TestService_GetShipment(t *testing.T) {
 	}
 }
 
-//func TestService_GetShipment(t *testing.T) {
-//	ctx := context.Background()
-//	shipmentID := uuid.New()
-//
-//	tests := []struct {
-//		name                   string
-//		mockSetup              func(m *RepositoryMock)
-//		expectedResponse       models.GetShipmentResponse
-//		expectedErrorSubstring string
-//	}{
-//		{
-//			name: "Success",
-//			mockSetup: func(m *RepositoryMock) {
-//				m.MockSelectShipment(func(ctx context.Context, id uuid.UUID) (shipmentrepository.SelectShipmentOutput, error) {
-//					return shipmentrepository.SelectShipmentOutput{
-//						ID:              shipmentID,
-//						ReferenceNumber: "REF",
-//						Status:          models.ShipmentStatusPending,
-//						CreatedAt:       time.Time{},
-//					}, nil
-//				})
-//			},
-//			expectedResponse: models.GetShipmentResponse{
-//				ID:              shipmentID,
-//				ReferenceNumber: "REF",
-//				Status:          models.ShipmentStatusPending,
-//				CreatedAt:       time.Time{},
-//			},
-//		},
-//		{
-//			name: "Not found",
-//			mockSetup: func(m *RepositoryMock) {
-//				m.MockSelectShipment(func(ctx context.Context, id uuid.UUID) (shipmentrepository.SelectShipmentOutput, error) {
-//					return shipmentrepository.SelectShipmentOutput{}, errs.ErrShipmentNotFound
-//				})
-//			},
-//			expectedErrorSubstring: "s.shipmentRepository.SelectShipment: shipment not found",
-//		},
-//	}
-//
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			m := NewRepositoryMock(t)
-//			tt.mockSetup(m)
-//			service := New(m)
-//
-//			resp, err := service.GetShipment(ctx, shipmentID)
-//			if tt.expectedErrorSubstring != "" {
-//				require.ErrorContains(t, err, tt.expectedErrorSubstring)
-//			} else {
-//				require.NoError(t, err)
-//				require.Equal(t, tt.expectedResponse, resp)
-//			}
-//		})
-//	}
-//}
-//
-//func TestService_GetShipmentEvents(t *testing.T) {
-//	ctx := context.Background()
-//	shipmentID := uuid.New()
-//
-//	tests := []struct {
-//		name                   string
-//		mockSetup              func(m *RepositoryMock)
-//		expectedCount          int
-//		expectedErrorSubstring string
-//	}{
-//		{
-//			name: "Success",
-//			mockSetup: func(m *RepositoryMock) {
-//				m.SelectEventsMock.
-//					Expect(minimock.AnyContext, shipmentID).
-//					Return(
-//						[]shipmentrepository.SelectEventOutput{
-//							{ID: uuid.New(), ShipmentID: shipmentID, Status: models.ShipmentStatusPending},
-//							{ID: uuid.New(), ShipmentID: shipmentID, Status: models.ShipmentStatusAwaitingDriver},
-//						},
-//						nil,
-//					)
-//			},
-//			expectedCount: 2,
-//		},
-//		{
-//			name: "Error",
-//			mockSetup: func(m *RepositoryMock) {
-//				m.SelectEventsMock.
-//					Expect(minimock.AnyContext, shipmentID).
-//					Return(nil, errors.New("db error"))
-//			},
-//			expectedErrorSubstring: "s.shipmentRepository.SelectEvents: db error",
-//		},
-//	}
-//
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			m := NewRepositoryMock(t)
-//			tt.mockSetup(m)
-//			service := New(m)
-//
-//			resp, err := service.GetShipmentEvents(ctx, shipmentID)
-//			if tt.expectedErrorSubstring != "" {
-//				require.ErrorContains(t, err, tt.expectedErrorSubstring)
-//			} else {
-//				require.NoError(t, err)
-//				require.Len(t, resp, tt.expectedCount)
-//			}
-//		})
-//	}
-//}
+func TestService_GetShipmentEvents(t *testing.T) {
+	mockUUID := uuid.New()
+
+	tests := []struct {
+		name                   string
+		request                uuid.UUID
+		expectedResponse       []models.ShipmentEvent
+		mockSetup              func(repository *RepositoryMock)
+		expectedErrorSubstring string
+	}{
+		{
+			name:    "Shipment not found",
+			request: mockUUID,
+			mockSetup: func(repository *RepositoryMock) {
+				repository.SelectEventsMock.
+					Expect(minimock.AnyContext, mockUUID).
+					Return([]shipmentrepository.SelectEventOutput{}, errs.ErrShipmentNotFound)
+			},
+			expectedResponse:       nil,
+			expectedErrorSubstring: errs.ErrShipmentNotFound.Error(),
+		},
+		{
+			name:    "Success",
+			request: mockUUID,
+			mockSetup: func(repository *RepositoryMock) {
+				selectEventsOutputMock := []shipmentrepository.SelectEventOutput{
+					{
+						ID:         mockUUID,
+						ShipmentID: mockUUID,
+						Status:     shipmentpb.ShipmentStatus_Pending,
+						Details:    "",
+						OccurredAt: time.Time{},
+					},
+					{
+						ID:         mockUUID,
+						ShipmentID: mockUUID,
+						Status:     shipmentpb.ShipmentStatus_AwaitingDriver,
+						Details:    "",
+						OccurredAt: time.Time{},
+					},
+					{
+						ID:         mockUUID,
+						ShipmentID: mockUUID,
+						Status:     shipmentpb.ShipmentStatus_PickedUp,
+						Details:    "",
+						OccurredAt: time.Time{},
+					},
+				}
+
+				repository.SelectEventsMock.
+					Expect(minimock.AnyContext, mockUUID).
+					Return(selectEventsOutputMock, nil)
+			},
+			expectedResponse: []models.ShipmentEvent{
+				{
+					ID:         mockUUID,
+					ShipmentID: mockUUID,
+					Status:     shipmentpb.ShipmentStatus_Pending,
+					Details:    "",
+					OccurredAt: time.Time{},
+				},
+				{
+					ID:         mockUUID,
+					ShipmentID: mockUUID,
+					Status:     shipmentpb.ShipmentStatus_AwaitingDriver,
+					Details:    "",
+					OccurredAt: time.Time{},
+				},
+				{
+					ID:         mockUUID,
+					ShipmentID: mockUUID,
+					Status:     shipmentpb.ShipmentStatus_PickedUp,
+					Details:    "",
+					OccurredAt: time.Time{},
+				},
+			},
+			expectedErrorSubstring: "",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			c := minimock.NewController(t)
+
+			repositoryMock := NewRepositoryMock(c)
+			referenceGeneratorMock := NewReferenceGeneratorMock(c)
+
+			test.mockSetup(repositoryMock)
+
+			shipmentService := New(repositoryMock, referenceGeneratorMock)
+
+			actualResponse, actualError := shipmentService.GetShipmentEvents(context.Background(), test.request)
+			if len(test.expectedErrorSubstring) > 0 {
+				require.ErrorContains(t, actualError, test.expectedErrorSubstring)
+			}
+
+			require.Equal(t, test.expectedResponse, actualResponse)
+		})
+	}
+}
