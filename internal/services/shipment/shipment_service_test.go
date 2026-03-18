@@ -9,6 +9,7 @@ import (
 	"github.com/bazeeko/vektor-shipment/internal/models"
 	"github.com/bazeeko/vektor-shipment/internal/models/errs"
 	shipmentrepository "github.com/bazeeko/vektor-shipment/internal/repository/postgresql/shipment"
+	"github.com/bazeeko/vektor-shipment/internal/services/pricing"
 	shipmentpb "github.com/bazeeko/vektor-shipment/pkg/api/shipment/v1"
 	"github.com/gojuno/minimock/v3"
 	"github.com/google/uuid"
@@ -18,8 +19,9 @@ import (
 func TestNew(t *testing.T) {
 	repositoryMock := NewRepositoryMock(t)
 	referenceGeneratorMock := NewReferenceGeneratorMock(t)
+	pricingServiceMock := NewPricingServiceMock(t)
 
-	service := New(repositoryMock, referenceGeneratorMock)
+	service := New(repositoryMock, referenceGeneratorMock, pricingServiceMock)
 
 	require.NotNil(t, service)
 	require.NotNil(t, service.shipmentRepository)
@@ -31,24 +33,38 @@ func TestService_CreateShipment(t *testing.T) {
 	unitID := uuid.New()
 	shipmentID := uuid.New()
 
+	shipmentCost := int64(100000)
+	driverRevenue := int64(80000)
+
 	tests := []struct {
-		name                   string
-		request                models.CreateShipmentRequest
-		expectedResponse       uuid.UUID
-		mockSetup              func(repository *RepositoryMock, referenceGenerator *ReferenceGeneratorMock)
+		name             string
+		request          models.CreateShipmentRequest
+		expectedResponse uuid.UUID
+		mockSetup        func(
+			repository *RepositoryMock,
+			referenceGenerator *ReferenceGeneratorMock,
+			pricingService *PricingServiceMock,
+		)
 		expectedErrorSubstring string
 	}{
 		{
 			name: "Success",
 			request: models.CreateShipmentRequest{
-				Origin:        "Origin",
-				Destination:   "Destination",
-				DriverName:    "Driver Name",
-				UnitID:        unitID,
-				ShipmentCost:  100000,
-				DriverRevenue: 60000,
+				Origin:      "Origin",
+				Destination: "Destination",
+				DriverName:  "Driver Name",
+				UnitID:      unitID,
 			},
-			mockSetup: func(repository *RepositoryMock, referenceGenerator *ReferenceGeneratorMock) {
+			mockSetup: func(repository *RepositoryMock, referenceGenerator *ReferenceGeneratorMock, pricingService *PricingServiceMock) {
+				costMock := pricing.Cost{
+					ShipmentCost:  shipmentCost,
+					DriverRevenue: driverRevenue,
+				}
+
+				pricingService.CalculateShipmentCostMock.
+					Expect().
+					Return(costMock, nil)
+
 				referenceGenerator.GenerateReferenceNumberMock.
 					Expect().
 					Return(refNumber, nil)
@@ -59,8 +75,8 @@ func TestService_CreateShipment(t *testing.T) {
 					Origin:          "Origin",
 					Destination:     "Destination",
 					DriverName:      "Driver Name",
-					ShipmentCost:    100000,
-					DriverRevenue:   60000,
+					ShipmentCost:    shipmentCost,
+					DriverRevenue:   driverRevenue,
 					Status:          shipmentpb.ShipmentStatus_Pending,
 					EventDetails:    "Shipment created.",
 				}
@@ -73,16 +89,38 @@ func TestService_CreateShipment(t *testing.T) {
 			expectedErrorSubstring: "",
 		},
 		{
+			name: "Calculate cost error",
+			request: models.CreateShipmentRequest{
+				Origin:      "Origin",
+				Destination: "Destination",
+				DriverName:  "Driver Name",
+				UnitID:      unitID,
+			},
+			mockSetup: func(_ *RepositoryMock, _ *ReferenceGeneratorMock, pricingService *PricingServiceMock) {
+				pricingService.CalculateShipmentCostMock.
+					Expect().
+					Return(pricing.Cost{}, errors.New("calculate cost error"))
+			},
+			expectedErrorSubstring: "calculate cost error",
+		},
+		{
 			name: "Reference generator error",
 			request: models.CreateShipmentRequest{
-				Origin:        "Origin",
-				Destination:   "Destination",
-				DriverName:    "Driver Name",
-				UnitID:        unitID,
-				ShipmentCost:  100000,
-				DriverRevenue: 60000,
+				Origin:      "Origin",
+				Destination: "Destination",
+				DriverName:  "Driver Name",
+				UnitID:      unitID,
 			},
-			mockSetup: func(_ *RepositoryMock, referenceGenerator *ReferenceGeneratorMock) {
+			mockSetup: func(_ *RepositoryMock, referenceGenerator *ReferenceGeneratorMock, pricingService *PricingServiceMock) {
+				costMock := pricing.Cost{
+					ShipmentCost:  shipmentCost,
+					DriverRevenue: driverRevenue,
+				}
+
+				pricingService.CalculateShipmentCostMock.
+					Expect().
+					Return(costMock, nil)
+
 				referenceGenerator.GenerateReferenceNumberMock.
 					Expect().
 					Return("", errors.New("reference generator error"))
@@ -92,14 +130,21 @@ func TestService_CreateShipment(t *testing.T) {
 		{
 			name: "Repository error",
 			request: models.CreateShipmentRequest{
-				Origin:        "Origin",
-				Destination:   "Destination",
-				DriverName:    "Driver Name",
-				UnitID:        unitID,
-				ShipmentCost:  100000,
-				DriverRevenue: 60000,
+				Origin:      "Origin",
+				Destination: "Destination",
+				DriverName:  "Driver Name",
+				UnitID:      unitID,
 			},
-			mockSetup: func(repository *RepositoryMock, referenceGenerator *ReferenceGeneratorMock) {
+			mockSetup: func(repository *RepositoryMock, referenceGenerator *ReferenceGeneratorMock, pricingService *PricingServiceMock) {
+				costMock := pricing.Cost{
+					ShipmentCost:  shipmentCost,
+					DriverRevenue: driverRevenue,
+				}
+
+				pricingService.CalculateShipmentCostMock.
+					Expect().
+					Return(costMock, nil)
+
 				referenceGenerator.GenerateReferenceNumberMock.
 					Expect().
 					Return(refNumber, nil)
@@ -110,8 +155,8 @@ func TestService_CreateShipment(t *testing.T) {
 					Origin:          "Origin",
 					Destination:     "Destination",
 					DriverName:      "Driver Name",
-					ShipmentCost:    100000,
-					DriverRevenue:   60000,
+					ShipmentCost:    shipmentCost,
+					DriverRevenue:   driverRevenue,
 					Status:          shipmentpb.ShipmentStatus_Pending,
 					EventDetails:    "Shipment created.",
 				}
@@ -130,10 +175,11 @@ func TestService_CreateShipment(t *testing.T) {
 
 			repositoryMock := NewRepositoryMock(c)
 			referenceGeneratorMock := NewReferenceGeneratorMock(c)
+			pricingServiceMock := NewPricingServiceMock(c)
 
-			test.mockSetup(repositoryMock, referenceGeneratorMock)
+			test.mockSetup(repositoryMock, referenceGeneratorMock, pricingServiceMock)
 
-			shipmentService := New(repositoryMock, referenceGeneratorMock)
+			shipmentService := New(repositoryMock, referenceGeneratorMock, pricingServiceMock)
 
 			actualResponse, actualError := shipmentService.CreateShipment(context.Background(), test.request)
 			if len(test.expectedErrorSubstring) > 0 {
@@ -394,10 +440,11 @@ func TestService_AddShipmentEvent(t *testing.T) {
 
 			repositoryMock := NewRepositoryMock(c)
 			referenceGeneratorMock := NewReferenceGeneratorMock(c)
+			pricingServiceMock := NewPricingServiceMock(c)
 
 			test.mockSetup(repositoryMock)
 
-			shipmentService := New(repositoryMock, referenceGeneratorMock)
+			shipmentService := New(repositoryMock, referenceGeneratorMock, pricingServiceMock)
 
 			actualError := shipmentService.AddShipmentEvent(context.Background(), test.request)
 			if len(test.expectedErrorSubstring) > 0 {
@@ -473,10 +520,11 @@ func TestService_GetShipment(t *testing.T) {
 
 			repositoryMock := NewRepositoryMock(c)
 			referenceGeneratorMock := NewReferenceGeneratorMock(c)
+			pricingServiceMock := NewPricingServiceMock(c)
 
 			test.mockSetup(repositoryMock)
 
-			shipmentService := New(repositoryMock, referenceGeneratorMock)
+			shipmentService := New(repositoryMock, referenceGeneratorMock, pricingServiceMock)
 
 			actualResponse, actualError := shipmentService.GetShipment(context.Background(), test.request)
 			if len(test.expectedErrorSubstring) > 0 {
@@ -574,10 +622,11 @@ func TestService_GetShipmentEvents(t *testing.T) {
 
 			repositoryMock := NewRepositoryMock(c)
 			referenceGeneratorMock := NewReferenceGeneratorMock(c)
+			pricingServiceMock := NewPricingServiceMock(c)
 
 			test.mockSetup(repositoryMock)
 
-			shipmentService := New(repositoryMock, referenceGeneratorMock)
+			shipmentService := New(repositoryMock, referenceGeneratorMock, pricingServiceMock)
 
 			actualResponse, actualError := shipmentService.GetShipmentEvents(context.Background(), test.request)
 			if len(test.expectedErrorSubstring) > 0 {

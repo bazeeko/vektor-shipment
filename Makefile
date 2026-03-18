@@ -29,6 +29,7 @@ bin-deps:
 mock:
 	${BIN_DIR}/minimock -i ./internal/services/shipment.Repository -o ./internal/services/shipment/repository_mock_test.go -n RepositoryMock -p shipment
 	${BIN_DIR}/minimock -i ./internal/services/shipment.ReferenceGenerator -o ./internal/services/shipment/reference_generator_mock_test.go -n ReferenceGeneratorMock -p shipment
+	${BIN_DIR}/minimock -i ./internal/services/shipment.PricingService -o ./internal/services/shipment/pricing_service_mock_test.go -n PricingServiceMock -p shipment
 
 .PHONY: protoc-generate
 protoc-generate:
