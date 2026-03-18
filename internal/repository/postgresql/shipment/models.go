@@ -3,7 +3,7 @@ package shipment
 import (
 	"time"
 
-	"github.com/bazeeko/vektor-shipment/internal/models"
+	shipmentpb "github.com/bazeeko/vektor-shipment/pkg/api/shipment/v1"
 	"github.com/google/uuid"
 )
 
@@ -15,13 +15,13 @@ type InsertShipmentParams struct {
 	DriverName      string
 	ShipmentCost    int64
 	DriverRevenue   int64
-	Status          models.ShipmentStatus
+	Status          shipmentpb.ShipmentStatus
 	EventDetails    string
 }
 
 type InsertEventParams struct {
 	ShipmentID uuid.UUID
-	Status     models.ShipmentStatus
+	Status     shipmentpb.ShipmentStatus
 	Details    string
 }
 
@@ -35,14 +35,14 @@ type SelectShipmentOutput struct {
 	ShipmentCost    int64
 	DriverRevenue   int64
 	CreatedAt       time.Time
-	Status          models.ShipmentStatus
+	Status          shipmentpb.ShipmentStatus
 	UpdatedAt       time.Time
 }
 
 type SelectEventOutput struct {
 	ID         uuid.UUID
 	ShipmentID uuid.UUID
-	Status     models.ShipmentStatus
+	Status     shipmentpb.ShipmentStatus
 	Details    string
 	OccurredAt time.Time
 }

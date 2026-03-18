@@ -96,7 +96,7 @@ func (h *Handler) AddShipmentEvent(ctx context.Context, in *shipmentpb.AddShipme
 
 	request := models.AddShipmentEventRequest{
 		ShipmentID: shipmentID,
-		Status:     models.ShipmentStatus(in.GetStatus()),
+		Status:     in.GetStatus(),
 		Details:    in.GetDetails(),
 	}
 

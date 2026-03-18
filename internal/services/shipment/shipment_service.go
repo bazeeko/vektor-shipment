@@ -8,6 +8,7 @@ import (
 	"github.com/bazeeko/vektor-shipment/internal/models"
 	"github.com/bazeeko/vektor-shipment/internal/models/errs"
 	shipmentrepository "github.com/bazeeko/vektor-shipment/internal/repository/postgresql/shipment"
+	shipmentpb "github.com/bazeeko/vektor-shipment/pkg/api/shipment/v1"
 	"github.com/google/uuid"
 )
 
@@ -49,7 +50,7 @@ func (s *Service) CreateShipment(ctx context.Context, request models.CreateShipm
 		DriverName:      request.DriverName,
 		ShipmentCost:    request.ShipmentCost,
 		DriverRevenue:   request.DriverRevenue,
-		Status:          models.ShipmentStatusPending,
+		Status:          shipmentpb.ShipmentStatus_Pending,
 		EventDetails:    "Shipment created.",
 	}
 
@@ -70,22 +71,22 @@ func (s *Service) AddShipmentEvent(ctx context.Context, request models.AddShipme
 	isValidStatus := false
 
 	switch lastEvent.Status {
-	case models.ShipmentStatusPending:
-		isValidStatus = request.Status == models.ShipmentStatusAwaitingDriver || request.Status == models.ShipmentStatusCancelled
-	case models.ShipmentStatusAwaitingDriver:
-		isValidStatus = request.Status == models.ShipmentStatusPickedUp || request.Status == models.ShipmentStatusCancelled
-	case models.ShipmentStatusPickedUp:
-		isValidStatus = request.Status == models.ShipmentStatusInTransit || request.Status == models.ShipmentStatusCancelled
-	case models.ShipmentStatusInTransit:
-		isValidStatus = request.Status == models.ShipmentStatusDelivered ||
-			request.Status == models.ShipmentStatusDelayed ||
-			request.Status == models.ShipmentStatusAtTransferPoint ||
-			request.Status == models.ShipmentStatusCancelled
-	case models.ShipmentStatusDelayed:
-		isValidStatus = request.Status == models.ShipmentStatusInTransit || request.Status == models.ShipmentStatusCancelled
-	case models.ShipmentStatusAtTransferPoint:
-		isValidStatus = request.Status == models.ShipmentStatusAwaitingDriver || request.Status == models.ShipmentStatusCancelled
-	case models.ShipmentStatusCancelled, models.ShipmentStatusDelivered:
+	case shipmentpb.ShipmentStatus_Pending:
+		isValidStatus = request.Status == shipmentpb.ShipmentStatus_AwaitingDriver || request.Status == shipmentpb.ShipmentStatus_Cancelled
+	case shipmentpb.ShipmentStatus_AwaitingDriver:
+		isValidStatus = request.Status == shipmentpb.ShipmentStatus_PickedUp || request.Status == shipmentpb.ShipmentStatus_Cancelled
+	case shipmentpb.ShipmentStatus_PickedUp:
+		isValidStatus = request.Status == shipmentpb.ShipmentStatus_InTransit || request.Status == shipmentpb.ShipmentStatus_Cancelled
+	case shipmentpb.ShipmentStatus_InTransit:
+		isValidStatus = request.Status == shipmentpb.ShipmentStatus_Delivered ||
+			request.Status == shipmentpb.ShipmentStatus_Delayed ||
+			request.Status == shipmentpb.ShipmentStatus_AtTransferPoint ||
+			request.Status == shipmentpb.ShipmentStatus_Cancelled
+	case shipmentpb.ShipmentStatus_Delayed:
+		isValidStatus = request.Status == shipmentpb.ShipmentStatus_InTransit || request.Status == shipmentpb.ShipmentStatus_Cancelled
+	case shipmentpb.ShipmentStatus_AtTransferPoint:
+		isValidStatus = request.Status == shipmentpb.ShipmentStatus_AwaitingDriver || request.Status == shipmentpb.ShipmentStatus_Cancelled
+	case shipmentpb.ShipmentStatus_Cancelled, shipmentpb.ShipmentStatus_Delivered:
 		isValidStatus = false
 	}
 
