@@ -2,13 +2,8 @@ package shipment
 
 import (
 	"context"
-	"crypto/rand"
 	"fmt"
 	"log/slog"
-	"math/big"
-	"strconv"
-	"strings"
-	"time"
 
 	"github.com/bazeeko/vektor-shipment/internal/models"
 	"github.com/bazeeko/vektor-shipment/internal/models/errs"
@@ -24,24 +19,27 @@ type Repository interface {
 	SelectLastEvent(ctx context.Context, shipmentID uuid.UUID) (shipmentrepository.SelectEventOutput, error)
 }
 
-type Service struct {
-	shipmentRepository Repository
+type ReferenceGenerator interface {
+	GenerateReferenceNumber() (string, error)
 }
 
-func New(shipmentRepository Repository) *Service {
+type Service struct {
+	shipmentRepository Repository
+	referenceGenerator ReferenceGenerator
+}
+
+func New(shipmentRepository Repository, referenceGenerator ReferenceGenerator) *Service {
 	return &Service{
 		shipmentRepository: shipmentRepository,
+		referenceGenerator: referenceGenerator,
 	}
 }
 
 func (s *Service) CreateShipment(ctx context.Context, request models.CreateShipmentRequest) (uuid.UUID, error) {
-	randomNumber, err := rand.Int(rand.Reader, big.NewInt(9999999999999))
+	refNumber, err := s.referenceGenerator.GenerateReferenceNumber()
 	if err != nil {
-		return uuid.Nil, fmt.Errorf("rand.Int: %w", err)
+		return uuid.Nil, fmt.Errorf("s.referenceGenerator.GenerateReferenceNumber: %w", err)
 	}
-
-	refNumberInt64 := time.Now().UnixNano() + randomNumber.Int64()
-	refNumber := strings.ToUpper(strconv.FormatInt(refNumberInt64, 36))
 
 	insertShipmentParams := shipmentrepository.InsertShipmentParams{
 		ReferenceNumber: refNumber,
