@@ -5,6 +5,7 @@ package shipment.v1;
 option go_package = "github.com/bazeeko/vektor-shipment/pkg/api/shipment/v1;shipmentpb";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 enum ShipmentStatus {
   Pending = 0;
@@ -22,12 +23,12 @@ message Shipment {
   string reference_number = 2;
   string origin = 3;
   string destination = 4;
-  ShipmentStatus status = 5;
-  string driver_name = 6;
-  string unit_id = 7;
-  int64 shipment_cost = 8;
-  int64 driver_revenue = 9;
-  google.protobuf.Timestamp created_at = 10;
+  string driver_name = 5;
+  string unit_id = 6;
+  int64 shipment_cost = 7;
+  int64 driver_revenue = 8;
+  google.protobuf.Timestamp created_at = 9;
+  ShipmentStatus status = 10;
   google.protobuf.Timestamp updated_at = 11;
 }
 
@@ -44,13 +45,13 @@ message CreateShipmentRequest {
   string origin = 2;
   string destination = 3;
   string driver_name = 4;
-  string unit_number = 5;
+  string unit_id = 5;
   int64 shipment_cost = 6;
   int64 driver_revenue = 7;
 }
 
 message CreateShipmentResponse {
-  Shipment shipment = 1;
+  string shipment_id = 1;
 }
 
 message GetShipmentRequest {
@@ -64,11 +65,7 @@ message GetShipmentResponse {
 message AddShipmentEventRequest {
   string shipment_id = 1;
   ShipmentStatus status = 2;
-  string comment = 3;
-}
-
-message AddShipmentEventResponse {
-  ShipmentEvent event = 1;
+  string details = 3;
 }
 
 message GetShipmentEventsRequest {
@@ -82,6 +79,6 @@ message GetShipmentEventsResponse {
 service ShipmentService {
   rpc CreateShipment(CreateShipmentRequest) returns (CreateShipmentResponse);
   rpc GetShipment(GetShipmentRequest) returns (GetShipmentResponse);
-  rpc AddShipmentEvent(AddShipmentEventRequest) returns (AddShipmentEventResponse);
+  rpc AddShipmentEvent(AddShipmentEventRequest) returns (google.protobuf.Empty);
   rpc GetShipmentEvents(GetShipmentEventsRequest) returns (GetShipmentEventsResponse);
 }

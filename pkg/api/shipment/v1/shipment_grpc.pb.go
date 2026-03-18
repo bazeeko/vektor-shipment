@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -31,7 +32,7 @@ const (
 type ShipmentServiceClient interface {
 	CreateShipment(ctx context.Context, in *CreateShipmentRequest, opts ...grpc.CallOption) (*CreateShipmentResponse, error)
 	GetShipment(ctx context.Context, in *GetShipmentRequest, opts ...grpc.CallOption) (*GetShipmentResponse, error)
-	AddShipmentEvent(ctx context.Context, in *AddShipmentEventRequest, opts ...grpc.CallOption) (*AddShipmentEventResponse, error)
+	AddShipmentEvent(ctx context.Context, in *AddShipmentEventRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetShipmentEvents(ctx context.Context, in *GetShipmentEventsRequest, opts ...grpc.CallOption) (*GetShipmentEventsResponse, error)
 }
 
@@ -63,9 +64,9 @@ func (c *shipmentServiceClient) GetShipment(ctx context.Context, in *GetShipment
 	return out, nil
 }
 
-func (c *shipmentServiceClient) AddShipmentEvent(ctx context.Context, in *AddShipmentEventRequest, opts ...grpc.CallOption) (*AddShipmentEventResponse, error) {
+func (c *shipmentServiceClient) AddShipmentEvent(ctx context.Context, in *AddShipmentEventRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AddShipmentEventResponse)
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, ShipmentService_AddShipmentEvent_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -89,7 +90,7 @@ func (c *shipmentServiceClient) GetShipmentEvents(ctx context.Context, in *GetSh
 type ShipmentServiceServer interface {
 	CreateShipment(context.Context, *CreateShipmentRequest) (*CreateShipmentResponse, error)
 	GetShipment(context.Context, *GetShipmentRequest) (*GetShipmentResponse, error)
-	AddShipmentEvent(context.Context, *AddShipmentEventRequest) (*AddShipmentEventResponse, error)
+	AddShipmentEvent(context.Context, *AddShipmentEventRequest) (*emptypb.Empty, error)
 	GetShipmentEvents(context.Context, *GetShipmentEventsRequest) (*GetShipmentEventsResponse, error)
 	mustEmbedUnimplementedShipmentServiceServer()
 }
@@ -107,7 +108,7 @@ func (UnimplementedShipmentServiceServer) CreateShipment(context.Context, *Creat
 func (UnimplementedShipmentServiceServer) GetShipment(context.Context, *GetShipmentRequest) (*GetShipmentResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetShipment not implemented")
 }
-func (UnimplementedShipmentServiceServer) AddShipmentEvent(context.Context, *AddShipmentEventRequest) (*AddShipmentEventResponse, error) {
+func (UnimplementedShipmentServiceServer) AddShipmentEvent(context.Context, *AddShipmentEventRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method AddShipmentEvent not implemented")
 }
 func (UnimplementedShipmentServiceServer) GetShipmentEvents(context.Context, *GetShipmentEventsRequest) (*GetShipmentEventsResponse, error) {

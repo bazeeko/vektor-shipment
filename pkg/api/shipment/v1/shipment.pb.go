@@ -9,6 +9,7 @@ package shipmentpb
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
@@ -92,12 +93,12 @@ type Shipment struct {
 	ReferenceNumber string                 `protobuf:"bytes,2,opt,name=reference_number,json=referenceNumber,proto3" json:"reference_number,omitempty"`
 	Origin          string                 `protobuf:"bytes,3,opt,name=origin,proto3" json:"origin,omitempty"`
 	Destination     string                 `protobuf:"bytes,4,opt,name=destination,proto3" json:"destination,omitempty"`
-	Status          ShipmentStatus         `protobuf:"varint,5,opt,name=status,proto3,enum=shipment.v1.ShipmentStatus" json:"status,omitempty"`
-	DriverName      string                 `protobuf:"bytes,6,opt,name=driver_name,json=driverName,proto3" json:"driver_name,omitempty"`
-	UnitId          string                 `protobuf:"bytes,7,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
-	ShipmentCost    int64                  `protobuf:"varint,8,opt,name=shipment_cost,json=shipmentCost,proto3" json:"shipment_cost,omitempty"`
-	DriverRevenue   int64                  `protobuf:"varint,9,opt,name=driver_revenue,json=driverRevenue,proto3" json:"driver_revenue,omitempty"`
-	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	DriverName      string                 `protobuf:"bytes,5,opt,name=driver_name,json=driverName,proto3" json:"driver_name,omitempty"`
+	UnitId          string                 `protobuf:"bytes,6,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
+	ShipmentCost    int64                  `protobuf:"varint,7,opt,name=shipment_cost,json=shipmentCost,proto3" json:"shipment_cost,omitempty"`
+	DriverRevenue   int64                  `protobuf:"varint,8,opt,name=driver_revenue,json=driverRevenue,proto3" json:"driver_revenue,omitempty"`
+	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	Status          ShipmentStatus         `protobuf:"varint,10,opt,name=status,proto3,enum=shipment.v1.ShipmentStatus" json:"status,omitempty"`
 	UpdatedAt       *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -161,13 +162,6 @@ func (x *Shipment) GetDestination() string {
 	return ""
 }
 
-func (x *Shipment) GetStatus() ShipmentStatus {
-	if x != nil {
-		return x.Status
-	}
-	return ShipmentStatus_Pending
-}
-
 func (x *Shipment) GetDriverName() string {
 	if x != nil {
 		return x.DriverName
@@ -201,6 +195,13 @@ func (x *Shipment) GetCreatedAt() *timestamppb.Timestamp {
 		return x.CreatedAt
 	}
 	return nil
+}
+
+func (x *Shipment) GetStatus() ShipmentStatus {
+	if x != nil {
+		return x.Status
+	}
+	return ShipmentStatus_Pending
 }
 
 func (x *Shipment) GetUpdatedAt() *timestamppb.Timestamp {
@@ -292,7 +293,7 @@ type CreateShipmentRequest struct {
 	Origin          string                 `protobuf:"bytes,2,opt,name=origin,proto3" json:"origin,omitempty"`
 	Destination     string                 `protobuf:"bytes,3,opt,name=destination,proto3" json:"destination,omitempty"`
 	DriverName      string                 `protobuf:"bytes,4,opt,name=driver_name,json=driverName,proto3" json:"driver_name,omitempty"`
-	UnitNumber      string                 `protobuf:"bytes,5,opt,name=unit_number,json=unitNumber,proto3" json:"unit_number,omitempty"`
+	UnitId          string                 `protobuf:"bytes,5,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
 	ShipmentCost    int64                  `protobuf:"varint,6,opt,name=shipment_cost,json=shipmentCost,proto3" json:"shipment_cost,omitempty"`
 	DriverRevenue   int64                  `protobuf:"varint,7,opt,name=driver_revenue,json=driverRevenue,proto3" json:"driver_revenue,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -357,9 +358,9 @@ func (x *CreateShipmentRequest) GetDriverName() string {
 	return ""
 }
 
-func (x *CreateShipmentRequest) GetUnitNumber() string {
+func (x *CreateShipmentRequest) GetUnitId() string {
 	if x != nil {
-		return x.UnitNumber
+		return x.UnitId
 	}
 	return ""
 }
@@ -380,7 +381,7 @@ func (x *CreateShipmentRequest) GetDriverRevenue() int64 {
 
 type CreateShipmentResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Shipment      *Shipment              `protobuf:"bytes,1,opt,name=shipment,proto3" json:"shipment,omitempty"`
+	ShipmentId    string                 `protobuf:"bytes,1,opt,name=shipment_id,json=shipmentId,proto3" json:"shipment_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -415,11 +416,11 @@ func (*CreateShipmentResponse) Descriptor() ([]byte, []int) {
 	return file_shipment_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *CreateShipmentResponse) GetShipment() *Shipment {
+func (x *CreateShipmentResponse) GetShipmentId() string {
 	if x != nil {
-		return x.Shipment
+		return x.ShipmentId
 	}
-	return nil
+	return ""
 }
 
 type GetShipmentRequest struct {
@@ -514,7 +515,7 @@ type AddShipmentEventRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ShipmentId    string                 `protobuf:"bytes,1,opt,name=shipment_id,json=shipmentId,proto3" json:"shipment_id,omitempty"`
 	Status        ShipmentStatus         `protobuf:"varint,2,opt,name=status,proto3,enum=shipment.v1.ShipmentStatus" json:"status,omitempty"`
-	Comment       string                 `protobuf:"bytes,3,opt,name=comment,proto3" json:"comment,omitempty"`
+	Details       string                 `protobuf:"bytes,3,opt,name=details,proto3" json:"details,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -563,55 +564,11 @@ func (x *AddShipmentEventRequest) GetStatus() ShipmentStatus {
 	return ShipmentStatus_Pending
 }
 
-func (x *AddShipmentEventRequest) GetComment() string {
+func (x *AddShipmentEventRequest) GetDetails() string {
 	if x != nil {
-		return x.Comment
+		return x.Details
 	}
 	return ""
-}
-
-type AddShipmentEventResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Event         *ShipmentEvent         `protobuf:"bytes,1,opt,name=event,proto3" json:"event,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *AddShipmentEventResponse) Reset() {
-	*x = AddShipmentEventResponse{}
-	mi := &file_shipment_proto_msgTypes[7]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AddShipmentEventResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AddShipmentEventResponse) ProtoMessage() {}
-
-func (x *AddShipmentEventResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_shipment_proto_msgTypes[7]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AddShipmentEventResponse.ProtoReflect.Descriptor instead.
-func (*AddShipmentEventResponse) Descriptor() ([]byte, []int) {
-	return file_shipment_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *AddShipmentEventResponse) GetEvent() *ShipmentEvent {
-	if x != nil {
-		return x.Event
-	}
-	return nil
 }
 
 type GetShipmentEventsRequest struct {
@@ -623,7 +580,7 @@ type GetShipmentEventsRequest struct {
 
 func (x *GetShipmentEventsRequest) Reset() {
 	*x = GetShipmentEventsRequest{}
-	mi := &file_shipment_proto_msgTypes[8]
+	mi := &file_shipment_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -635,7 +592,7 @@ func (x *GetShipmentEventsRequest) String() string {
 func (*GetShipmentEventsRequest) ProtoMessage() {}
 
 func (x *GetShipmentEventsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_shipment_proto_msgTypes[8]
+	mi := &file_shipment_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -648,7 +605,7 @@ func (x *GetShipmentEventsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetShipmentEventsRequest.ProtoReflect.Descriptor instead.
 func (*GetShipmentEventsRequest) Descriptor() ([]byte, []int) {
-	return file_shipment_proto_rawDescGZIP(), []int{8}
+	return file_shipment_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetShipmentEventsRequest) GetShipmentId() string {
@@ -667,7 +624,7 @@ type GetShipmentEventsResponse struct {
 
 func (x *GetShipmentEventsResponse) Reset() {
 	*x = GetShipmentEventsResponse{}
-	mi := &file_shipment_proto_msgTypes[9]
+	mi := &file_shipment_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -679,7 +636,7 @@ func (x *GetShipmentEventsResponse) String() string {
 func (*GetShipmentEventsResponse) ProtoMessage() {}
 
 func (x *GetShipmentEventsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_shipment_proto_msgTypes[9]
+	mi := &file_shipment_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -692,7 +649,7 @@ func (x *GetShipmentEventsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetShipmentEventsResponse.ProtoReflect.Descriptor instead.
 func (*GetShipmentEventsResponse) Descriptor() ([]byte, []int) {
-	return file_shipment_proto_rawDescGZIP(), []int{9}
+	return file_shipment_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetShipmentEventsResponse) GetEvents() []*ShipmentEvent {
@@ -706,21 +663,21 @@ var File_shipment_proto protoreflect.FileDescriptor
 
 const file_shipment_proto_rawDesc = "" +
 	"\n" +
-	"\x0eshipment.proto\x12\vshipment.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb0\x03\n" +
+	"\x0eshipment.proto\x12\vshipment.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xb0\x03\n" +
 	"\bShipment\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12)\n" +
 	"\x10reference_number\x18\x02 \x01(\tR\x0freferenceNumber\x12\x16\n" +
 	"\x06origin\x18\x03 \x01(\tR\x06origin\x12 \n" +
-	"\vdestination\x18\x04 \x01(\tR\vdestination\x123\n" +
-	"\x06status\x18\x05 \x01(\x0e2\x1b.shipment.v1.ShipmentStatusR\x06status\x12\x1f\n" +
-	"\vdriver_name\x18\x06 \x01(\tR\n" +
+	"\vdestination\x18\x04 \x01(\tR\vdestination\x12\x1f\n" +
+	"\vdriver_name\x18\x05 \x01(\tR\n" +
 	"driverName\x12\x17\n" +
-	"\aunit_id\x18\a \x01(\tR\x06unitId\x12#\n" +
-	"\rshipment_cost\x18\b \x01(\x03R\fshipmentCost\x12%\n" +
-	"\x0edriver_revenue\x18\t \x01(\x03R\rdriverRevenue\x129\n" +
+	"\aunit_id\x18\x06 \x01(\tR\x06unitId\x12#\n" +
+	"\rshipment_cost\x18\a \x01(\x03R\fshipmentCost\x12%\n" +
+	"\x0edriver_revenue\x18\b \x01(\x03R\rdriverRevenue\x129\n" +
 	"\n" +
-	"created_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x123\n" +
+	"\x06status\x18\n" +
+	" \x01(\x0e2\x1b.shipment.v1.ShipmentStatusR\x06status\x129\n" +
 	"\n" +
 	"updated_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xcc\x01\n" +
 	"\rShipmentEvent\x12\x0e\n" +
@@ -730,19 +687,19 @@ const file_shipment_proto_rawDesc = "" +
 	"\x06status\x18\x03 \x01(\x0e2\x1b.shipment.v1.ShipmentStatusR\x06status\x12\x18\n" +
 	"\adetails\x18\x04 \x01(\tR\adetails\x12;\n" +
 	"\voccurred_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"occurredAt\"\x8a\x02\n" +
+	"occurredAt\"\x82\x02\n" +
 	"\x15CreateShipmentRequest\x12)\n" +
 	"\x10reference_number\x18\x01 \x01(\tR\x0freferenceNumber\x12\x16\n" +
 	"\x06origin\x18\x02 \x01(\tR\x06origin\x12 \n" +
 	"\vdestination\x18\x03 \x01(\tR\vdestination\x12\x1f\n" +
 	"\vdriver_name\x18\x04 \x01(\tR\n" +
-	"driverName\x12\x1f\n" +
-	"\vunit_number\x18\x05 \x01(\tR\n" +
-	"unitNumber\x12#\n" +
+	"driverName\x12\x17\n" +
+	"\aunit_id\x18\x05 \x01(\tR\x06unitId\x12#\n" +
 	"\rshipment_cost\x18\x06 \x01(\x03R\fshipmentCost\x12%\n" +
-	"\x0edriver_revenue\x18\a \x01(\x03R\rdriverRevenue\"K\n" +
-	"\x16CreateShipmentResponse\x121\n" +
-	"\bshipment\x18\x01 \x01(\v2\x15.shipment.v1.ShipmentR\bshipment\"5\n" +
+	"\x0edriver_revenue\x18\a \x01(\x03R\rdriverRevenue\"9\n" +
+	"\x16CreateShipmentResponse\x12\x1f\n" +
+	"\vshipment_id\x18\x01 \x01(\tR\n" +
+	"shipmentId\"5\n" +
 	"\x12GetShipmentRequest\x12\x1f\n" +
 	"\vshipment_id\x18\x01 \x01(\tR\n" +
 	"shipmentId\"H\n" +
@@ -752,9 +709,7 @@ const file_shipment_proto_rawDesc = "" +
 	"\vshipment_id\x18\x01 \x01(\tR\n" +
 	"shipmentId\x123\n" +
 	"\x06status\x18\x02 \x01(\x0e2\x1b.shipment.v1.ShipmentStatusR\x06status\x12\x18\n" +
-	"\acomment\x18\x03 \x01(\tR\acomment\"L\n" +
-	"\x18AddShipmentEventResponse\x120\n" +
-	"\x05event\x18\x01 \x01(\v2\x1a.shipment.v1.ShipmentEventR\x05event\";\n" +
+	"\adetails\x18\x03 \x01(\tR\adetails\";\n" +
 	"\x18GetShipmentEventsRequest\x12\x1f\n" +
 	"\vshipment_id\x18\x01 \x01(\tR\n" +
 	"shipmentId\"O\n" +
@@ -768,11 +723,11 @@ const file_shipment_proto_rawDesc = "" +
 	"\aDelayed\x10\x04\x12\x13\n" +
 	"\x0fAtTransferPoint\x10\x05\x12\r\n" +
 	"\tDelivered\x10\x06\x12\r\n" +
-	"\tCancelled\x10\a2\x83\x03\n" +
+	"\tCancelled\x10\a2\xf4\x02\n" +
 	"\x0fShipmentService\x12Y\n" +
 	"\x0eCreateShipment\x12\".shipment.v1.CreateShipmentRequest\x1a#.shipment.v1.CreateShipmentResponse\x12P\n" +
-	"\vGetShipment\x12\x1f.shipment.v1.GetShipmentRequest\x1a .shipment.v1.GetShipmentResponse\x12_\n" +
-	"\x10AddShipmentEvent\x12$.shipment.v1.AddShipmentEventRequest\x1a%.shipment.v1.AddShipmentEventResponse\x12b\n" +
+	"\vGetShipment\x12\x1f.shipment.v1.GetShipmentRequest\x1a .shipment.v1.GetShipmentResponse\x12P\n" +
+	"\x10AddShipmentEvent\x12$.shipment.v1.AddShipmentEventRequest\x1a\x16.google.protobuf.Empty\x12b\n" +
 	"\x11GetShipmentEvents\x12%.shipment.v1.GetShipmentEventsRequest\x1a&.shipment.v1.GetShipmentEventsResponseBCZAgithub.com/bazeeko/vektor-shipment/pkg/api/shipment/v1;shipmentpbb\x06proto3"
 
 var (
@@ -788,7 +743,7 @@ func file_shipment_proto_rawDescGZIP() []byte {
 }
 
 var file_shipment_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_shipment_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_shipment_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_shipment_proto_goTypes = []any{
 	(ShipmentStatus)(0),               // 0: shipment.v1.ShipmentStatus
 	(*Shipment)(nil),                  // 1: shipment.v1.Shipment
@@ -798,35 +753,33 @@ var file_shipment_proto_goTypes = []any{
 	(*GetShipmentRequest)(nil),        // 5: shipment.v1.GetShipmentRequest
 	(*GetShipmentResponse)(nil),       // 6: shipment.v1.GetShipmentResponse
 	(*AddShipmentEventRequest)(nil),   // 7: shipment.v1.AddShipmentEventRequest
-	(*AddShipmentEventResponse)(nil),  // 8: shipment.v1.AddShipmentEventResponse
-	(*GetShipmentEventsRequest)(nil),  // 9: shipment.v1.GetShipmentEventsRequest
-	(*GetShipmentEventsResponse)(nil), // 10: shipment.v1.GetShipmentEventsResponse
-	(*timestamppb.Timestamp)(nil),     // 11: google.protobuf.Timestamp
+	(*GetShipmentEventsRequest)(nil),  // 8: shipment.v1.GetShipmentEventsRequest
+	(*GetShipmentEventsResponse)(nil), // 9: shipment.v1.GetShipmentEventsResponse
+	(*timestamppb.Timestamp)(nil),     // 10: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),             // 11: google.protobuf.Empty
 }
 var file_shipment_proto_depIdxs = []int32{
-	0,  // 0: shipment.v1.Shipment.status:type_name -> shipment.v1.ShipmentStatus
-	11, // 1: shipment.v1.Shipment.created_at:type_name -> google.protobuf.Timestamp
-	11, // 2: shipment.v1.Shipment.updated_at:type_name -> google.protobuf.Timestamp
+	10, // 0: shipment.v1.Shipment.created_at:type_name -> google.protobuf.Timestamp
+	0,  // 1: shipment.v1.Shipment.status:type_name -> shipment.v1.ShipmentStatus
+	10, // 2: shipment.v1.Shipment.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 3: shipment.v1.ShipmentEvent.status:type_name -> shipment.v1.ShipmentStatus
-	11, // 4: shipment.v1.ShipmentEvent.occurred_at:type_name -> google.protobuf.Timestamp
-	1,  // 5: shipment.v1.CreateShipmentResponse.shipment:type_name -> shipment.v1.Shipment
-	1,  // 6: shipment.v1.GetShipmentResponse.shipment:type_name -> shipment.v1.Shipment
-	0,  // 7: shipment.v1.AddShipmentEventRequest.status:type_name -> shipment.v1.ShipmentStatus
-	2,  // 8: shipment.v1.AddShipmentEventResponse.event:type_name -> shipment.v1.ShipmentEvent
-	2,  // 9: shipment.v1.GetShipmentEventsResponse.events:type_name -> shipment.v1.ShipmentEvent
-	3,  // 10: shipment.v1.ShipmentService.CreateShipment:input_type -> shipment.v1.CreateShipmentRequest
-	5,  // 11: shipment.v1.ShipmentService.GetShipment:input_type -> shipment.v1.GetShipmentRequest
-	7,  // 12: shipment.v1.ShipmentService.AddShipmentEvent:input_type -> shipment.v1.AddShipmentEventRequest
-	9,  // 13: shipment.v1.ShipmentService.GetShipmentEvents:input_type -> shipment.v1.GetShipmentEventsRequest
-	4,  // 14: shipment.v1.ShipmentService.CreateShipment:output_type -> shipment.v1.CreateShipmentResponse
-	6,  // 15: shipment.v1.ShipmentService.GetShipment:output_type -> shipment.v1.GetShipmentResponse
-	8,  // 16: shipment.v1.ShipmentService.AddShipmentEvent:output_type -> shipment.v1.AddShipmentEventResponse
-	10, // 17: shipment.v1.ShipmentService.GetShipmentEvents:output_type -> shipment.v1.GetShipmentEventsResponse
-	14, // [14:18] is the sub-list for method output_type
-	10, // [10:14] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	10, // 4: shipment.v1.ShipmentEvent.occurred_at:type_name -> google.protobuf.Timestamp
+	1,  // 5: shipment.v1.GetShipmentResponse.shipment:type_name -> shipment.v1.Shipment
+	0,  // 6: shipment.v1.AddShipmentEventRequest.status:type_name -> shipment.v1.ShipmentStatus
+	2,  // 7: shipment.v1.GetShipmentEventsResponse.events:type_name -> shipment.v1.ShipmentEvent
+	3,  // 8: shipment.v1.ShipmentService.CreateShipment:input_type -> shipment.v1.CreateShipmentRequest
+	5,  // 9: shipment.v1.ShipmentService.GetShipment:input_type -> shipment.v1.GetShipmentRequest
+	7,  // 10: shipment.v1.ShipmentService.AddShipmentEvent:input_type -> shipment.v1.AddShipmentEventRequest
+	8,  // 11: shipment.v1.ShipmentService.GetShipmentEvents:input_type -> shipment.v1.GetShipmentEventsRequest
+	4,  // 12: shipment.v1.ShipmentService.CreateShipment:output_type -> shipment.v1.CreateShipmentResponse
+	6,  // 13: shipment.v1.ShipmentService.GetShipment:output_type -> shipment.v1.GetShipmentResponse
+	11, // 14: shipment.v1.ShipmentService.AddShipmentEvent:output_type -> google.protobuf.Empty
+	9,  // 15: shipment.v1.ShipmentService.GetShipmentEvents:output_type -> shipment.v1.GetShipmentEventsResponse
+	12, // [12:16] is the sub-list for method output_type
+	8,  // [8:12] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_shipment_proto_init() }
@@ -840,7 +793,7 @@ func file_shipment_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_shipment_proto_rawDesc), len(file_shipment_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   10,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
