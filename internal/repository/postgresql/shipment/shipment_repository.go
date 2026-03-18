@@ -150,7 +150,7 @@ func (r *Repository) SelectEvents(ctx context.Context, shipmentID uuid.UUID) ([]
 	for rows.Next() {
 		var output SelectEventOutput
 
-		if err = rows.Scan(&output.ID, output.ShipmentID, &output.Status, &output.Details, output.OccurredAt); err != nil {
+		if err = rows.Scan(&output.ID, &output.ShipmentID, &output.Status, &output.Details, &output.OccurredAt); err != nil {
 			return nil, fmt.Errorf("rows.Scan: %w", err)
 		}
 
