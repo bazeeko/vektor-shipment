@@ -48,14 +48,14 @@ func New(
 }
 
 func (s *Service) CreateShipment(ctx context.Context, request models.CreateShipmentRequest) (uuid.UUID, error) {
-	refNumber, err := s.referenceGenerator.GenerateReferenceNumber()
-	if err != nil {
-		return uuid.Nil, fmt.Errorf("s.referenceGenerator.GenerateReferenceNumber: %w", err)
-	}
-
 	cost, err := s.pricingService.CalculateShipmentCost()
 	if err != nil {
 		return uuid.Nil, fmt.Errorf("s.pricingService.CalculateShipmentCost: %w", err)
+	}
+
+	refNumber, err := s.referenceGenerator.GenerateReferenceNumber()
+	if err != nil {
+		return uuid.Nil, fmt.Errorf("s.referenceGenerator.GenerateReferenceNumber: %w", err)
 	}
 
 	insertShipmentParams := shipmentrepository.InsertShipmentParams{
