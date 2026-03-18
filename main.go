@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"log/slog"
 	"os"
@@ -10,17 +11,36 @@ import (
 	"github.com/bazeeko/vektor-shipment/internal/app/grpc"
 	shipmenthandler "github.com/bazeeko/vektor-shipment/internal/app/grpc/shipment"
 	"github.com/bazeeko/vektor-shipment/internal/config"
+	"github.com/bazeeko/vektor-shipment/internal/repository/postgresql"
+	shipmentrepository "github.com/bazeeko/vektor-shipment/internal/repository/postgresql/shipment"
+	shipmentservice "github.com/bazeeko/vektor-shipment/internal/services/shipment"
 )
 
 func main() {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	cfg, err := config.Load()
 	if err != nil {
 		log.Fatalf("config.Load: %s", err)
 	}
 
-	shipmentHandler := shipmenthandler.New(cfg)
+	pool, err := postgresql.NewConnectWithMigration(ctx, postgresql.Params{
+		User:     cfg.Database.User,
+		Password: cfg.Database.Password,
+		Host:     cfg.Database.Host,
+		Port:     cfg.Database.Port,
+		DBName:   cfg.Database.DBName,
+	})
+	if err != nil {
+		log.Fatalf("postgresql.NewConnectWithMigration: %s", err)
+	}
 
-	server, err := grpc.NewServer(shipmentHandler, cfg.Server.GRPCPort)
+	shipmentRepository := shipmentrepository.New(pool)
+	shipmentService := shipmentservice.New(shipmentRepository)
+	shipmentHandler := shipmenthandler.New(shipmentService)
+
+	grpcServer, err := grpc.NewServer(shipmentHandler, cfg.Server.GRPCPort)
 	if err != nil {
 		log.Fatalf("grpc.NewServer: %s", err)
 	}
@@ -29,16 +49,16 @@ func main() {
 	signal.Notify(quit, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
 	go func() {
-		if err = server.Start(); err != nil {
-			log.Fatalf("server.Start: %s", err)
+		if err = grpcServer.Start(); err != nil {
+			log.Fatalf("grpcServer.Start: %s", err)
 		}
 	}()
 
 	<-quit
 
-	slog.Info("Shutting down server...")
+	slog.Info("Shutting down grpc server...")
 
-	server.GracefulStop()
+	grpcServer.GracefulStop()
 
-	slog.Info("Successfully shut down server.")
+	slog.Info("Successfully shut down grpc server.")
 }
