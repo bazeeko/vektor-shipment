@@ -39,6 +39,8 @@ type GetShipmentResponse struct {
 	ShipmentCost    int64
 	DriverRevenue   int64
 	CreatedAt       time.Time
+	Status          ShipmentStatus
+	UpdatedAt       time.Time
 }
 
 type AddShipmentEventRequest struct {

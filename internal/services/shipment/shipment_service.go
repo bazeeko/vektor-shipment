@@ -12,7 +12,7 @@ import (
 )
 
 type Repository interface {
-	InsertShipment(ctx context.Context, params shipmentrepository.InsertShipmentParams) error
+	InsertShipment(ctx context.Context, params shipmentrepository.InsertShipmentParams) (uuid.UUID, error)
 	InsertEvent(ctx context.Context, params shipmentrepository.InsertEventParams) error
 	SelectShipment(ctx context.Context, shipmentID uuid.UUID) (shipmentrepository.SelectShipmentOutput, error)
 	SelectEvents(ctx context.Context, shipmentID uuid.UUID) ([]shipmentrepository.SelectEventOutput, error)
@@ -29,7 +29,7 @@ func New(shipmentRepository Repository) *Service {
 	}
 }
 
-func (s *Service) CreateShipment(ctx context.Context, request models.CreateShipmentRequest) error {
+func (s *Service) CreateShipment(ctx context.Context, request models.CreateShipmentRequest) (uuid.UUID, error) {
 	insertShipmentParams := shipmentrepository.InsertShipmentParams{
 		ReferenceNumber: request.ReferenceNumber,
 		UnitID:          request.UnitID,
@@ -42,11 +42,12 @@ func (s *Service) CreateShipment(ctx context.Context, request models.CreateShipm
 		EventDetails:    "pending",
 	}
 
-	if err := s.shipmentRepository.InsertShipment(ctx, insertShipmentParams); err != nil {
-		return fmt.Errorf("s.shipmentRepository.InsertShipment: %w", err)
+	shipmentID, err := s.shipmentRepository.InsertShipment(ctx, insertShipmentParams)
+	if err != nil {
+		return uuid.UUID{}, fmt.Errorf("s.shipmentRepository.InsertShipment: %w", err)
 	}
 
-	return nil
+	return shipmentID, nil
 }
 
 func (s *Service) AddShipmentEvent(ctx context.Context, request models.AddShipmentEventRequest) error {
@@ -116,6 +117,8 @@ func (s *Service) GetShipment(ctx context.Context, shipmentID uuid.UUID) (models
 		ShipmentCost:    shipment.ShipmentCost,
 		DriverRevenue:   shipment.DriverRevenue,
 		CreatedAt:       shipment.CreatedAt,
+		Status:          shipment.Status,
+		UpdatedAt:       shipment.UpdatedAt,
 	}, nil
 }
 
