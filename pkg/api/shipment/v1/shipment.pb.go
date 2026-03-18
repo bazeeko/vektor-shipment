@@ -296,8 +296,6 @@ type CreateShipmentRequest struct {
 	Destination   string                 `protobuf:"bytes,2,opt,name=destination,proto3" json:"destination,omitempty"`
 	DriverName    string                 `protobuf:"bytes,3,opt,name=driver_name,json=driverName,proto3" json:"driver_name,omitempty"`
 	UnitId        string                 `protobuf:"bytes,4,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
-	ShipmentCost  int64                  `protobuf:"varint,5,opt,name=shipment_cost,json=shipmentCost,proto3" json:"shipment_cost,omitempty"`
-	DriverRevenue int64                  `protobuf:"varint,6,opt,name=driver_revenue,json=driverRevenue,proto3" json:"driver_revenue,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -358,20 +356,6 @@ func (x *CreateShipmentRequest) GetUnitId() string {
 		return x.UnitId
 	}
 	return ""
-}
-
-func (x *CreateShipmentRequest) GetShipmentCost() int64 {
-	if x != nil {
-		return x.ShipmentCost
-	}
-	return 0
-}
-
-func (x *CreateShipmentRequest) GetDriverRevenue() int64 {
-	if x != nil {
-		return x.DriverRevenue
-	}
-	return 0
 }
 
 type CreateShipmentResponse struct {
@@ -682,15 +666,13 @@ const file_shipment_proto_rawDesc = "" +
 	"\x06status\x18\x03 \x01(\x0e2\x1b.shipment.v1.ShipmentStatusR\x06status\x12\x18\n" +
 	"\adetails\x18\x04 \x01(\tR\adetails\x12;\n" +
 	"\voccurred_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"occurredAt\"\xd7\x01\n" +
+	"occurredAt\"\x8b\x01\n" +
 	"\x15CreateShipmentRequest\x12\x16\n" +
 	"\x06origin\x18\x01 \x01(\tR\x06origin\x12 \n" +
 	"\vdestination\x18\x02 \x01(\tR\vdestination\x12\x1f\n" +
 	"\vdriver_name\x18\x03 \x01(\tR\n" +
 	"driverName\x12\x17\n" +
-	"\aunit_id\x18\x04 \x01(\tR\x06unitId\x12#\n" +
-	"\rshipment_cost\x18\x05 \x01(\x03R\fshipmentCost\x12%\n" +
-	"\x0edriver_revenue\x18\x06 \x01(\x03R\rdriverRevenue\"9\n" +
+	"\aunit_id\x18\x04 \x01(\tR\x06unitId\"9\n" +
 	"\x16CreateShipmentResponse\x12\x1f\n" +
 	"\vshipment_id\x18\x01 \x01(\tR\n" +
 	"shipmentId\"5\n" +

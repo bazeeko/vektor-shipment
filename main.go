@@ -13,6 +13,7 @@ import (
 	"github.com/bazeeko/vektor-shipment/internal/config"
 	"github.com/bazeeko/vektor-shipment/internal/repository/postgresql"
 	shipmentrepository "github.com/bazeeko/vektor-shipment/internal/repository/postgresql/shipment"
+	pricingservice "github.com/bazeeko/vektor-shipment/internal/services/pricing"
 	"github.com/bazeeko/vektor-shipment/internal/services/reference"
 	shipmentservice "github.com/bazeeko/vektor-shipment/internal/services/shipment"
 )
@@ -38,9 +39,10 @@ func main() {
 	}
 
 	referenceGenerator := reference.New()
+	pricingService := pricingservice.New()
 
 	shipmentRepository := shipmentrepository.New(pool)
-	shipmentService := shipmentservice.New(shipmentRepository, referenceGenerator)
+	shipmentService := shipmentservice.New(shipmentRepository, referenceGenerator, pricingService)
 	shipmentHandler := shipmenthandler.New(shipmentService)
 
 	grpcServer, err := grpc.NewServer(shipmentHandler, cfg.Server.GRPCPort)

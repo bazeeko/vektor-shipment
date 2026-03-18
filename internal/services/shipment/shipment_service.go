@@ -8,6 +8,7 @@ import (
 	"github.com/bazeeko/vektor-shipment/internal/models"
 	"github.com/bazeeko/vektor-shipment/internal/models/errs"
 	shipmentrepository "github.com/bazeeko/vektor-shipment/internal/repository/postgresql/shipment"
+	pricingservice "github.com/bazeeko/vektor-shipment/internal/services/pricing"
 	shipmentpb "github.com/bazeeko/vektor-shipment/pkg/api/shipment/v1"
 	"github.com/google/uuid"
 )
@@ -24,15 +25,25 @@ type ReferenceGenerator interface {
 	GenerateReferenceNumber() (string, error)
 }
 
+type PricingService interface {
+	CalculateShipmentCost() (pricingservice.Cost, error)
+}
+
 type Service struct {
 	shipmentRepository Repository
 	referenceGenerator ReferenceGenerator
+	pricingService     PricingService
 }
 
-func New(shipmentRepository Repository, referenceGenerator ReferenceGenerator) *Service {
+func New(
+	shipmentRepository Repository,
+	referenceGenerator ReferenceGenerator,
+	pricingService PricingService,
+) *Service {
 	return &Service{
 		shipmentRepository: shipmentRepository,
 		referenceGenerator: referenceGenerator,
+		pricingService:     pricingService,
 	}
 }
 
@@ -42,14 +53,19 @@ func (s *Service) CreateShipment(ctx context.Context, request models.CreateShipm
 		return uuid.Nil, fmt.Errorf("s.referenceGenerator.GenerateReferenceNumber: %w", err)
 	}
 
+	cost, err := s.pricingService.CalculateShipmentCost()
+	if err != nil {
+		return uuid.Nil, fmt.Errorf("s.pricingService.CalculateShipmentCost: %w", err)
+	}
+
 	insertShipmentParams := shipmentrepository.InsertShipmentParams{
 		ReferenceNumber: refNumber,
 		UnitID:          request.UnitID,
 		Origin:          request.Origin,
 		Destination:     request.Destination,
 		DriverName:      request.DriverName,
-		ShipmentCost:    request.ShipmentCost,
-		DriverRevenue:   request.DriverRevenue,
+		ShipmentCost:    cost.ShipmentCost,
+		DriverRevenue:   cost.DriverRevenue,
 		Status:          shipmentpb.ShipmentStatus_Pending,
 		EventDetails:    "Shipment created.",
 	}

@@ -22,12 +22,10 @@ const (
 )
 
 type CreateShipmentRequest struct {
-	Origin        string
-	Destination   string
-	DriverName    string
-	UnitID        uuid.UUID
-	ShipmentCost  int64
-	DriverRevenue int64
+	Origin      string
+	Destination string
+	DriverName  string
+	UnitID      uuid.UUID
 }
 
 type GetShipmentResponse struct {

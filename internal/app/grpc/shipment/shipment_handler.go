@@ -41,12 +41,10 @@ func (h *Handler) CreateShipment(ctx context.Context, in *shipmentpb.CreateShipm
 	}
 
 	shipmentID, err := h.shipmentService.CreateShipment(ctx, models.CreateShipmentRequest{
-		Origin:        in.Origin,
-		Destination:   in.Destination,
-		DriverName:    in.DriverName,
-		UnitID:        unitID,
-		ShipmentCost:  in.ShipmentCost,
-		DriverRevenue: in.DriverRevenue,
+		Origin:      in.Origin,
+		Destination: in.Destination,
+		DriverName:  in.DriverName,
+		UnitID:      unitID,
 	})
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "h.shipmentService.CreateShipment: %v", err)
