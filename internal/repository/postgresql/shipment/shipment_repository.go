@@ -64,7 +64,7 @@ func (r *Repository) InsertShipment(ctx context.Context, params InsertShipmentPa
 			params.ShipmentCost,
 			params.DriverRevenue,
 		).Scan(
-			shipmentID,
+			&shipmentID,
 		)
 		if err != nil {
 			return fmt.Errorf("tx.Exec queryInsertShipment: %w", err)
@@ -169,10 +169,10 @@ func (r *Repository) SelectLastEvent(ctx context.Context, shipmentID uuid.UUID) 
 		shipmentID,
 	).Scan(
 		&output.ID,
-		output.ShipmentID,
+		&output.ShipmentID,
 		&output.Status,
 		&output.Details,
-		output.OccurredAt,
+		&output.OccurredAt,
 	)
 	if err != nil {
 		return SelectEventOutput{}, fmt.Errorf("r.pool.QueryRow: %w", err)
