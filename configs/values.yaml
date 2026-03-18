@@ -1,7 +1,7 @@
 server:
   grpc_port: 50051
 postgresql:
-  host: localhost
+  host: postgres_shipment
   port: 5432
   user: user
   password: password
