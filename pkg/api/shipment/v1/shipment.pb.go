@@ -26,37 +26,40 @@ const (
 type ShipmentStatus int32
 
 const (
-	ShipmentStatus_Pending         ShipmentStatus = 0
-	ShipmentStatus_AwaitingDriver  ShipmentStatus = 1
-	ShipmentStatus_PickedUp        ShipmentStatus = 2
-	ShipmentStatus_InTransit       ShipmentStatus = 3
-	ShipmentStatus_Delayed         ShipmentStatus = 4
-	ShipmentStatus_AtTransferPoint ShipmentStatus = 5
-	ShipmentStatus_Delivered       ShipmentStatus = 6
-	ShipmentStatus_Cancelled       ShipmentStatus = 7
+	ShipmentStatus_Unknown         ShipmentStatus = 0
+	ShipmentStatus_Pending         ShipmentStatus = 1
+	ShipmentStatus_AwaitingDriver  ShipmentStatus = 2
+	ShipmentStatus_PickedUp        ShipmentStatus = 3
+	ShipmentStatus_InTransit       ShipmentStatus = 4
+	ShipmentStatus_Delayed         ShipmentStatus = 5
+	ShipmentStatus_AtTransferPoint ShipmentStatus = 6
+	ShipmentStatus_Delivered       ShipmentStatus = 7
+	ShipmentStatus_Cancelled       ShipmentStatus = 8
 )
 
 // Enum value maps for ShipmentStatus.
 var (
 	ShipmentStatus_name = map[int32]string{
-		0: "Pending",
-		1: "AwaitingDriver",
-		2: "PickedUp",
-		3: "InTransit",
-		4: "Delayed",
-		5: "AtTransferPoint",
-		6: "Delivered",
-		7: "Cancelled",
+		0: "Unknown",
+		1: "Pending",
+		2: "AwaitingDriver",
+		3: "PickedUp",
+		4: "InTransit",
+		5: "Delayed",
+		6: "AtTransferPoint",
+		7: "Delivered",
+		8: "Cancelled",
 	}
 	ShipmentStatus_value = map[string]int32{
-		"Pending":         0,
-		"AwaitingDriver":  1,
-		"PickedUp":        2,
-		"InTransit":       3,
-		"Delayed":         4,
-		"AtTransferPoint": 5,
-		"Delivered":       6,
-		"Cancelled":       7,
+		"Unknown":         0,
+		"Pending":         1,
+		"AwaitingDriver":  2,
+		"PickedUp":        3,
+		"InTransit":       4,
+		"Delayed":         5,
+		"AtTransferPoint": 6,
+		"Delivered":       7,
+		"Cancelled":       8,
 	}
 )
 
@@ -201,7 +204,7 @@ func (x *Shipment) GetStatus() ShipmentStatus {
 	if x != nil {
 		return x.Status
 	}
-	return ShipmentStatus_Pending
+	return ShipmentStatus_Unknown
 }
 
 func (x *Shipment) GetUpdatedAt() *timestamppb.Timestamp {
@@ -270,7 +273,7 @@ func (x *ShipmentEvent) GetStatus() ShipmentStatus {
 	if x != nil {
 		return x.Status
 	}
-	return ShipmentStatus_Pending
+	return ShipmentStatus_Unknown
 }
 
 func (x *ShipmentEvent) GetDetails() string {
@@ -553,7 +556,7 @@ func (x *AddShipmentEventRequest) GetStatus() ShipmentStatus {
 	if x != nil {
 		return x.Status
 	}
-	return ShipmentStatus_Pending
+	return ShipmentStatus_Unknown
 }
 
 func (x *AddShipmentEventRequest) GetDetails() string {
@@ -705,16 +708,17 @@ const file_shipment_proto_rawDesc = "" +
 	"\vshipment_id\x18\x01 \x01(\tR\n" +
 	"shipmentId\"O\n" +
 	"\x19GetShipmentEventsResponse\x122\n" +
-	"\x06events\x18\x01 \x03(\v2\x1a.shipment.v1.ShipmentEventR\x06events*\x8e\x01\n" +
+	"\x06events\x18\x01 \x03(\v2\x1a.shipment.v1.ShipmentEventR\x06events*\x9b\x01\n" +
 	"\x0eShipmentStatus\x12\v\n" +
-	"\aPending\x10\x00\x12\x12\n" +
-	"\x0eAwaitingDriver\x10\x01\x12\f\n" +
-	"\bPickedUp\x10\x02\x12\r\n" +
-	"\tInTransit\x10\x03\x12\v\n" +
-	"\aDelayed\x10\x04\x12\x13\n" +
-	"\x0fAtTransferPoint\x10\x05\x12\r\n" +
-	"\tDelivered\x10\x06\x12\r\n" +
-	"\tCancelled\x10\a2\xf4\x02\n" +
+	"\aUnknown\x10\x00\x12\v\n" +
+	"\aPending\x10\x01\x12\x12\n" +
+	"\x0eAwaitingDriver\x10\x02\x12\f\n" +
+	"\bPickedUp\x10\x03\x12\r\n" +
+	"\tInTransit\x10\x04\x12\v\n" +
+	"\aDelayed\x10\x05\x12\x13\n" +
+	"\x0fAtTransferPoint\x10\x06\x12\r\n" +
+	"\tDelivered\x10\a\x12\r\n" +
+	"\tCancelled\x10\b2\xf4\x02\n" +
 	"\x0fShipmentService\x12Y\n" +
 	"\x0eCreateShipment\x12\".shipment.v1.CreateShipmentRequest\x1a#.shipment.v1.CreateShipmentResponse\x12P\n" +
 	"\vGetShipment\x12\x1f.shipment.v1.GetShipmentRequest\x1a .shipment.v1.GetShipmentResponse\x12P\n" +

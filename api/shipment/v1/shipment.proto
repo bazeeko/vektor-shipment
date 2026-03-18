@@ -8,14 +8,15 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
 enum ShipmentStatus {
-  Pending = 0;
-  AwaitingDriver = 1;
-  PickedUp = 2;
-  InTransit = 3;
-  Delayed = 4;
-  AtTransferPoint = 5;
-  Delivered = 6;
-  Cancelled = 7;
+  Unknown = 0;
+  Pending = 1;
+  AwaitingDriver = 2;
+  PickedUp = 3;
+  InTransit = 4;
+  Delayed = 5;
+  AtTransferPoint = 6;
+  Delivered = 7;
+  Cancelled = 8;
 }
 
 message Shipment {
