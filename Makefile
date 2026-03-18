@@ -23,6 +23,11 @@ vendor-proto: vendor-rm google/protobuf
 bin-deps:
 	GOBIN=$(BIN_DIR) go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	GOBIN=$(BIN_DIR) go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+	GOBIN=$(BIN_DIR) go install github.com/gojuno/minimock/v3/cmd/minimock@latest
+
+.PHONY: mock
+mock:
+	${BIN_DIR}/minimock -i ./internal/services/shipment.Repository -o ./internal/services/shipment/repository_mock_test.go -n RepositoryMock -p shipment
 
 .PHONY: protoc-generate
 protoc-generate:
