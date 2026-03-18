@@ -3,7 +3,6 @@ package shipment
 import (
 	"context"
 	"crypto/rand"
-	"errors"
 	"fmt"
 	"log/slog"
 	"math/big"
@@ -12,6 +11,7 @@ import (
 	"time"
 
 	"github.com/bazeeko/vektor-shipment/internal/models"
+	"github.com/bazeeko/vektor-shipment/internal/models/errs"
 	shipmentrepository "github.com/bazeeko/vektor-shipment/internal/repository/postgresql/shipment"
 	"github.com/google/uuid"
 )
@@ -98,7 +98,7 @@ func (s *Service) AddShipmentEvent(ctx context.Context, request models.AddShipme
 			"currentStatus", lastEvent.Status,
 			"newStatus", request.Status,
 		)
-		return errors.New("invalid shipment event status")
+		return errs.ErrInvalidEventStatus
 	}
 
 	insertEventParams := shipmentrepository.InsertEventParams{

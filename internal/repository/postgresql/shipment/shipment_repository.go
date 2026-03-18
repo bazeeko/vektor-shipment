@@ -2,8 +2,10 @@ package shipment
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	"github.com/bazeeko/vektor-shipment/internal/models/errs"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -123,8 +125,13 @@ func (r *Repository) SelectShipment(ctx context.Context, shipmentID uuid.UUID) (
 		&output.Status,
 		&output.UpdatedAt,
 	)
-	if err != nil {
+
+	switch {
+	case errors.Is(err, pgx.ErrNoRows):
+		return SelectShipmentOutput{}, errs.ErrShipmentNotFound
+	case err != nil:
 		return SelectShipmentOutput{}, fmt.Errorf("r.pool.QueryRow: %w", err)
+
 	}
 
 	return output, nil

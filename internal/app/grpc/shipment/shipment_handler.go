@@ -2,8 +2,10 @@ package shipment
 
 import (
 	"context"
+	"errors"
 
 	"github.com/bazeeko/vektor-shipment/internal/models"
+	"github.com/bazeeko/vektor-shipment/internal/models/errs"
 	shipmentpb "github.com/bazeeko/vektor-shipment/pkg/api/shipment/v1"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
@@ -62,7 +64,10 @@ func (h *Handler) GetShipment(ctx context.Context, in *shipmentpb.GetShipmentReq
 	}
 
 	shipment, err := h.shipmentService.GetShipment(ctx, shipmentID)
-	if err != nil {
+	switch {
+	case errors.Is(err, errs.ErrShipmentNotFound):
+		return nil, status.Error(codes.NotFound, err.Error())
+	case err != nil:
 		return nil, status.Errorf(codes.Internal, "h.shipmentService.GetShipment: %v", err)
 	}
 
@@ -95,7 +100,11 @@ func (h *Handler) AddShipmentEvent(ctx context.Context, in *shipmentpb.AddShipme
 		Details:    in.GetDetails(),
 	}
 
-	if err = h.shipmentService.AddShipmentEvent(ctx, request); err != nil {
+	err = h.shipmentService.AddShipmentEvent(ctx, request)
+	switch {
+	case errors.Is(err, errs.ErrInvalidEventStatus):
+		return nil, status.Error(codes.FailedPrecondition, err.Error())
+	case err != nil:
 		return nil, status.Errorf(codes.Internal, "h.shipmentService.AddShipmentEvent: %v", err)
 	}
 
