@@ -4,37 +4,41 @@ A simplified gRPC microservice for managing shipments and tracking their status 
 
 ## Overview
 
-This service provides a reliable way to create shipments and record their status transitions (e.g., from `PENDING` to `PICKED_UP` to `DELIVERED`). It ensures that only valid status transitions are allowed according to business rules and maintains a complete history of all status changes as events.
+This service provides a reliable way to create shipments and record their status transitions. It ensures that only valid status transitions are allowed according to business rules and maintains a complete history of all status changes as events in a PostgreSQL database.
 
 ## Architecture
 
-The service follows a layered architecture to separate concerns and manage dependencies effectively:
+The service follows a clean, layered architecture:
 
-- **Transport Layer (`internal/app/grpc`)**: Implements the gRPC server and handlers. It handles request validation and maps gRPC messages to internal models.
-- **Service Layer (`internal/services`)**: Contains the core business logic. It orchestrates the flow of data between the handler and the repository, enforcing state machine rules for status transitions.
-- **Repository Layer (`internal/repository`)**: Manages data persistence. The current implementation uses PostgreSQL for storing shipments and their event history.
-- **Models (`internal/models`)**: Defines the core domain entities and shared types used across all layers.
+- **Transport Layer (`internal/app/grpc`)**: Implements the gRPC server and handlers. Handles error mapping and request/response conversion.
+- **Service Layer (`internal/services`)**: Contains the core business logic and orchestrates dependencies.
+- **Repository Layer (`internal/repository`)**: Manages data persistence using PostgreSQL and structured SQL queries.
+- **Models (`internal/models`)**: Defines domain entities and shared business types.
 
-## Design Decisions & Assumptions
+## Key Features & Design Decisions
 
-### 1. Status State Machine
-The shipment lifecycle is governed by a set of allowed status transitions:
-- `PENDING` → `AWAITING_DRIVER` or `CANCELLED`
-- `AWAITING_DRIVER` → `PICKED_UP` or `CANCELLED`
-- `PICKED_UP` → `IN_TRANSIT` or `CANCELLED`
-- `IN_TRANSIT` → `DELIVERED`, `DELAYED`, `AT_TRANSFER_POINT`, or `CANCELLED`
-- `DELAYED` → `IN_TRANSIT` or `CANCELLED`
-- `AT_TRANSFER_POINT` → `AWAITING_DRIVER` or `CANCELLED`
-- `DELIVERED` and `CANCELLED` are terminal states.
+### 1. Robust State Machine
+Shipment statuses are managed via a controlled state machine to prevent illegal transitions (e.g., a `DELIVERED` shipment cannot become `CANCELLED`).
+- **Initial Status**: `Pending`
+- **Supported Transitions**: 
+    - `Pending` → `AwaitingDriver`, `Cancelled`
+    - `AwaitingDriver` → `PickedUp`, `Cancelled`
+    - `PickedUp` → `InTransit`, `Cancelled`
+    - `InTransit` → `Delivered`, `Delayed`, `AtTransferPoint`, `Cancelled`
+    - `Delayed` → `InTransit`, `Cancelled`
+    - `AtTransferPoint` → `AwaitingDriver`, `Cancelled`
 
-### 2. Multi-hop Tracking
-The system supports complex delivery routes through transfer points. A shipment can go from `IN_TRANSIT` to `AT_TRANSFER_POINT`, then back to `AWAITING_DRIVER` to be picked up by a new driver, forming a repeatable cycle.
+### 2. Extensible Reference Generation
+Shipment reference numbers are generated through a dedicated `ReferenceGenerator` interface, allowing for different generation strategies (e.g., random strings, sequential numbering, or UUIDs) without modifying the core service logic.
 
-### 3. Event-Driven History
-Every status change is recorded as a separate event in the database. This provides a full audit trail and allows for easy retrieval of the shipment's history.
+### 3. Event-Based Audit Trail
+Every status change is persisted as a "Shipment Event," providing a full chronological history of the shipment's journey.
 
-### 4. Database Migrations
-PostgreSQL is used with `goose` for version-controlled database migrations, ensuring the schema is always consistent across environments.
+### 4. Dynamic Pricing Calculation
+The `PricingService` handles the automated calculation of shipment costs and driver revenues during shipment creation. This decouples financial logic from the core tracking service.
+
+### 5. Database Schema & Migrations
+PostgreSQL is used for storage, with schema management handled by `goose` migrations located in the `migrations/` directory.
 
 ## How to Run
 
@@ -57,10 +61,7 @@ docker-compose down
 
 The service includes unit tests for the core business logic in the service layer.
 
-### Run tests
+Run tests with:
 ```bash
-go test ./... -v
+go test -v ./...
 ```
-
-### Mocking Strategy
-The service layer uses `minimock` to mock the repository interface, allowing for isolated testing of business rules without requiring a live database.
