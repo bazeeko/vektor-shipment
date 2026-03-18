@@ -52,7 +52,7 @@ func (s *Service) CreateShipment(ctx context.Context, request models.CreateShipm
 		ShipmentCost:    request.ShipmentCost,
 		DriverRevenue:   request.DriverRevenue,
 		Status:          models.ShipmentStatusPending,
-		EventDetails:    "pending",
+		EventDetails:    "Shipment created.",
 	}
 
 	shipmentID, err := s.shipmentRepository.InsertShipment(ctx, insertShipmentParams)

@@ -9,7 +9,7 @@ import (
 type ShipmentStatus int
 
 const (
-	ShipmentStatusPending = iota
+	ShipmentStatusPending ShipmentStatus = iota
 	ShipmentStatusAwaitingDriver
 	ShipmentStatusPickedUp
 	ShipmentStatusInTransit
