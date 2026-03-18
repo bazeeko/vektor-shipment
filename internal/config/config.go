@@ -13,11 +13,20 @@ const (
 )
 
 type Config struct {
-	Server Server `yaml:"server"`
+	Server   Server   `yaml:"server"`
+	Database Database `yaml:"postgresql"`
 }
 
 type Server struct {
 	GRPCPort int `yaml:"grpc_port"`
+}
+
+type Database struct {
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
+	User     string `yaml:"user"`
+	Password string `yaml:"password"`
+	DBName   string `yaml:"db_name"`
 }
 
 func Load() (*Config, error) {
