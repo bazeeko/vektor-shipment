@@ -35,6 +35,8 @@ type SelectShipmentOutput struct {
 	ShipmentCost    int64
 	DriverRevenue   int64
 	CreatedAt       time.Time
+	Status          models.ShipmentStatus
+	UpdatedAt       time.Time
 }
 
 type SelectEventOutput struct {

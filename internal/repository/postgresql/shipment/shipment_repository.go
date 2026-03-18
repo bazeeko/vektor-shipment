@@ -19,9 +19,12 @@ const (
     (shipment_id, status, details)
 	VALUES ($1, $2, $3)`
 
-	querySelectShipment = `SELECT id, reference_number, unit_id, origin, destination, driver_name, shipment_cost, driver_revenue, created_at
-	FROM public.shipments
-	WHERE id = $1`
+	querySelectShipment = `SELECT DISTINCT ON (s.id) s.id, s.reference_number, s.unit_id, s.origin, s.destination,
+                          s.driver_name,s.shipment_cost, s.driver_revenue, s.created_at, e.status, e.occurred_at
+	FROM shipments s
+         LEFT JOIN events e ON s.id = e.shipment_id
+	WHERE s.id = $1
+	ORDER BY s.id, e.occurred_at DESC;`
 
 	querySelectEvents = `SELECT id, shipment_id, status, details, occurred_at
 	FROM public.events
@@ -44,7 +47,7 @@ func New(pool *pgxpool.Pool) *Repository {
 	}
 }
 
-func (r *Repository) InsertShipment(ctx context.Context, params InsertShipmentParams) error {
+func (r *Repository) InsertShipment(ctx context.Context, params InsertShipmentParams) (uuid.UUID, error) {
 	var shipmentID uuid.UUID
 
 	err := pgx.BeginTxFunc(ctx, r.pool, pgx.TxOptions{}, func(tx pgx.Tx) error {
@@ -79,10 +82,10 @@ func (r *Repository) InsertShipment(ctx context.Context, params InsertShipmentPa
 		return nil
 	})
 	if err != nil {
-		return fmt.Errorf("pgx.BeginTxFunc: %w", err)
+		return uuid.UUID{}, fmt.Errorf("pgx.BeginTxFunc: %w", err)
 	}
 
-	return nil
+	return shipmentID, nil
 }
 
 func (r *Repository) InsertEvent(ctx context.Context, params InsertEventParams) error {
@@ -117,6 +120,8 @@ func (r *Repository) SelectShipment(ctx context.Context, shipmentID uuid.UUID) (
 		&output.ShipmentCost,
 		&output.DriverRevenue,
 		&output.CreatedAt,
+		&output.Status,
+		&output.UpdatedAt,
 	)
 	if err != nil {
 		return SelectShipmentOutput{}, fmt.Errorf("r.pool.QueryRow: %w", err)
