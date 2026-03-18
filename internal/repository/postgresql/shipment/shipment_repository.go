@@ -82,7 +82,7 @@ func (r *Repository) InsertShipment(ctx context.Context, params InsertShipmentPa
 		return nil
 	})
 	if err != nil {
-		return uuid.UUID{}, fmt.Errorf("pgx.BeginTxFunc: %w", err)
+		return uuid.Nil, fmt.Errorf("pgx.BeginTxFunc: %w", err)
 	}
 
 	return shipmentID, nil

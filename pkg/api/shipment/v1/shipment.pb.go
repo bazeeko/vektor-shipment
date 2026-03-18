@@ -288,16 +288,15 @@ func (x *ShipmentEvent) GetOccurredAt() *timestamppb.Timestamp {
 }
 
 type CreateShipmentRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	ReferenceNumber string                 `protobuf:"bytes,1,opt,name=reference_number,json=referenceNumber,proto3" json:"reference_number,omitempty"`
-	Origin          string                 `protobuf:"bytes,2,opt,name=origin,proto3" json:"origin,omitempty"`
-	Destination     string                 `protobuf:"bytes,3,opt,name=destination,proto3" json:"destination,omitempty"`
-	DriverName      string                 `protobuf:"bytes,4,opt,name=driver_name,json=driverName,proto3" json:"driver_name,omitempty"`
-	UnitId          string                 `protobuf:"bytes,5,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
-	ShipmentCost    int64                  `protobuf:"varint,6,opt,name=shipment_cost,json=shipmentCost,proto3" json:"shipment_cost,omitempty"`
-	DriverRevenue   int64                  `protobuf:"varint,7,opt,name=driver_revenue,json=driverRevenue,proto3" json:"driver_revenue,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Origin        string                 `protobuf:"bytes,1,opt,name=origin,proto3" json:"origin,omitempty"`
+	Destination   string                 `protobuf:"bytes,2,opt,name=destination,proto3" json:"destination,omitempty"`
+	DriverName    string                 `protobuf:"bytes,3,opt,name=driver_name,json=driverName,proto3" json:"driver_name,omitempty"`
+	UnitId        string                 `protobuf:"bytes,4,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
+	ShipmentCost  int64                  `protobuf:"varint,5,opt,name=shipment_cost,json=shipmentCost,proto3" json:"shipment_cost,omitempty"`
+	DriverRevenue int64                  `protobuf:"varint,6,opt,name=driver_revenue,json=driverRevenue,proto3" json:"driver_revenue,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateShipmentRequest) Reset() {
@@ -328,13 +327,6 @@ func (x *CreateShipmentRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use CreateShipmentRequest.ProtoReflect.Descriptor instead.
 func (*CreateShipmentRequest) Descriptor() ([]byte, []int) {
 	return file_shipment_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *CreateShipmentRequest) GetReferenceNumber() string {
-	if x != nil {
-		return x.ReferenceNumber
-	}
-	return ""
 }
 
 func (x *CreateShipmentRequest) GetOrigin() string {
@@ -687,16 +679,15 @@ const file_shipment_proto_rawDesc = "" +
 	"\x06status\x18\x03 \x01(\x0e2\x1b.shipment.v1.ShipmentStatusR\x06status\x12\x18\n" +
 	"\adetails\x18\x04 \x01(\tR\adetails\x12;\n" +
 	"\voccurred_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"occurredAt\"\x82\x02\n" +
-	"\x15CreateShipmentRequest\x12)\n" +
-	"\x10reference_number\x18\x01 \x01(\tR\x0freferenceNumber\x12\x16\n" +
-	"\x06origin\x18\x02 \x01(\tR\x06origin\x12 \n" +
-	"\vdestination\x18\x03 \x01(\tR\vdestination\x12\x1f\n" +
-	"\vdriver_name\x18\x04 \x01(\tR\n" +
+	"occurredAt\"\xd7\x01\n" +
+	"\x15CreateShipmentRequest\x12\x16\n" +
+	"\x06origin\x18\x01 \x01(\tR\x06origin\x12 \n" +
+	"\vdestination\x18\x02 \x01(\tR\vdestination\x12\x1f\n" +
+	"\vdriver_name\x18\x03 \x01(\tR\n" +
 	"driverName\x12\x17\n" +
-	"\aunit_id\x18\x05 \x01(\tR\x06unitId\x12#\n" +
-	"\rshipment_cost\x18\x06 \x01(\x03R\fshipmentCost\x12%\n" +
-	"\x0edriver_revenue\x18\a \x01(\x03R\rdriverRevenue\"9\n" +
+	"\aunit_id\x18\x04 \x01(\tR\x06unitId\x12#\n" +
+	"\rshipment_cost\x18\x05 \x01(\x03R\fshipmentCost\x12%\n" +
+	"\x0edriver_revenue\x18\x06 \x01(\x03R\rdriverRevenue\"9\n" +
 	"\x16CreateShipmentResponse\x12\x1f\n" +
 	"\vshipment_id\x18\x01 \x01(\tR\n" +
 	"shipmentId\"5\n" +

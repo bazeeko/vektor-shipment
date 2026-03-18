@@ -2,9 +2,14 @@ package shipment
 
 import (
 	"context"
+	"crypto/rand"
 	"errors"
 	"fmt"
 	"log/slog"
+	"math/big"
+	"strconv"
+	"strings"
+	"time"
 
 	"github.com/bazeeko/vektor-shipment/internal/models"
 	shipmentrepository "github.com/bazeeko/vektor-shipment/internal/repository/postgresql/shipment"
@@ -30,8 +35,16 @@ func New(shipmentRepository Repository) *Service {
 }
 
 func (s *Service) CreateShipment(ctx context.Context, request models.CreateShipmentRequest) (uuid.UUID, error) {
+	randomNumber, err := rand.Int(rand.Reader, big.NewInt(9999999999999))
+	if err != nil {
+		return uuid.Nil, fmt.Errorf("rand.Int: %w", err)
+	}
+
+	refNumberInt64 := time.Now().UnixNano() + randomNumber.Int64()
+	refNumber := strings.ToUpper(strconv.FormatInt(refNumberInt64, 36))
+
 	insertShipmentParams := shipmentrepository.InsertShipmentParams{
-		ReferenceNumber: request.ReferenceNumber,
+		ReferenceNumber: refNumber,
 		UnitID:          request.UnitID,
 		Origin:          request.Origin,
 		Destination:     request.Destination,
@@ -44,7 +57,7 @@ func (s *Service) CreateShipment(ctx context.Context, request models.CreateShipm
 
 	shipmentID, err := s.shipmentRepository.InsertShipment(ctx, insertShipmentParams)
 	if err != nil {
-		return uuid.UUID{}, fmt.Errorf("s.shipmentRepository.InsertShipment: %w", err)
+		return uuid.Nil, fmt.Errorf("s.shipmentRepository.InsertShipment: %w", err)
 	}
 
 	return shipmentID, nil

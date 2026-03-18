@@ -41,13 +41,12 @@ message ShipmentEvent {
 }
 
 message CreateShipmentRequest {
-  string reference_number = 1;
-  string origin = 2;
-  string destination = 3;
-  string driver_name = 4;
-  string unit_id = 5;
-  int64 shipment_cost = 6;
-  int64 driver_revenue = 7;
+  string origin = 1;
+  string destination = 2;
+  string driver_name = 3;
+  string unit_id = 4;
+  int64 shipment_cost = 5;
+  int64 driver_revenue = 6;
 }
 
 message CreateShipmentResponse {
