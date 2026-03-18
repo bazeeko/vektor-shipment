@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/bazeeko/vektor-shipment/internal/models"
 	"github.com/bazeeko/vektor-shipment/internal/models/errs"
@@ -405,3 +406,194 @@ func TestService_AddShipmentEvent(t *testing.T) {
 		})
 	}
 }
+
+func TestService_GetShipment(t *testing.T) {
+	mockUUID := uuid.New()
+
+	tests := []struct {
+		name                   string
+		request                uuid.UUID
+		expectedResponse       models.GetShipmentResponse
+		mockSetup              func(repository *RepositoryMock)
+		expectedErrorSubstring string
+	}{
+		{
+			name:    "Shipment not found",
+			request: mockUUID,
+			mockSetup: func(repository *RepositoryMock) {
+				repository.SelectShipmentMock.
+					Expect(minimock.AnyContext, mockUUID).
+					Return(shipmentrepository.SelectShipmentOutput{}, errs.ErrShipmentNotFound)
+			},
+			expectedResponse:       models.GetShipmentResponse{},
+			expectedErrorSubstring: errs.ErrShipmentNotFound.Error(),
+		},
+		{
+			name:    "Success",
+			request: mockUUID,
+			mockSetup: func(repository *RepositoryMock) {
+				selectShipmentOutputMock := shipmentrepository.SelectShipmentOutput{
+					ID:              mockUUID,
+					ReferenceNumber: "refNumber",
+					UnitID:          mockUUID,
+					Origin:          "origin",
+					Destination:     "destination",
+					DriverName:      "driverName",
+					ShipmentCost:    10000,
+					DriverRevenue:   9999,
+					CreatedAt:       time.Time{},
+					Status:          shipmentpb.ShipmentStatus_Pending,
+					UpdatedAt:       time.Time{},
+				}
+
+				repository.SelectShipmentMock.
+					Expect(minimock.AnyContext, mockUUID).
+					Return(selectShipmentOutputMock, nil)
+			},
+			expectedResponse: models.GetShipmentResponse{
+				ID:              mockUUID,
+				ReferenceNumber: "refNumber",
+				UnitID:          mockUUID,
+				Origin:          "origin",
+				Destination:     "destination",
+				DriverName:      "driverName",
+				ShipmentCost:    10000,
+				DriverRevenue:   9999,
+				CreatedAt:       time.Time{},
+				Status:          shipmentpb.ShipmentStatus_Pending,
+				UpdatedAt:       time.Time{},
+			},
+			expectedErrorSubstring: "",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			c := minimock.NewController(t)
+
+			repositoryMock := NewRepositoryMock(c)
+			referenceGeneratorMock := NewReferenceGeneratorMock(c)
+
+			test.mockSetup(repositoryMock)
+
+			shipmentService := New(repositoryMock, referenceGeneratorMock)
+
+			actualResponse, actualError := shipmentService.GetShipment(context.Background(), test.request)
+			if len(test.expectedErrorSubstring) > 0 {
+				require.ErrorContains(t, actualError, test.expectedErrorSubstring)
+			}
+
+			require.Equal(t, test.expectedResponse, actualResponse)
+		})
+	}
+}
+
+//func TestService_GetShipment(t *testing.T) {
+//	ctx := context.Background()
+//	shipmentID := uuid.New()
+//
+//	tests := []struct {
+//		name                   string
+//		mockSetup              func(m *RepositoryMock)
+//		expectedResponse       models.GetShipmentResponse
+//		expectedErrorSubstring string
+//	}{
+//		{
+//			name: "Success",
+//			mockSetup: func(m *RepositoryMock) {
+//				m.MockSelectShipment(func(ctx context.Context, id uuid.UUID) (shipmentrepository.SelectShipmentOutput, error) {
+//					return shipmentrepository.SelectShipmentOutput{
+//						ID:              shipmentID,
+//						ReferenceNumber: "REF",
+//						Status:          models.ShipmentStatusPending,
+//						CreatedAt:       time.Time{},
+//					}, nil
+//				})
+//			},
+//			expectedResponse: models.GetShipmentResponse{
+//				ID:              shipmentID,
+//				ReferenceNumber: "REF",
+//				Status:          models.ShipmentStatusPending,
+//				CreatedAt:       time.Time{},
+//			},
+//		},
+//		{
+//			name: "Not found",
+//			mockSetup: func(m *RepositoryMock) {
+//				m.MockSelectShipment(func(ctx context.Context, id uuid.UUID) (shipmentrepository.SelectShipmentOutput, error) {
+//					return shipmentrepository.SelectShipmentOutput{}, errs.ErrShipmentNotFound
+//				})
+//			},
+//			expectedErrorSubstring: "s.shipmentRepository.SelectShipment: shipment not found",
+//		},
+//	}
+//
+//	for _, tt := range tests {
+//		t.Run(tt.name, func(t *testing.T) {
+//			m := NewRepositoryMock(t)
+//			tt.mockSetup(m)
+//			service := New(m)
+//
+//			resp, err := service.GetShipment(ctx, shipmentID)
+//			if tt.expectedErrorSubstring != "" {
+//				require.ErrorContains(t, err, tt.expectedErrorSubstring)
+//			} else {
+//				require.NoError(t, err)
+//				require.Equal(t, tt.expectedResponse, resp)
+//			}
+//		})
+//	}
+//}
+//
+//func TestService_GetShipmentEvents(t *testing.T) {
+//	ctx := context.Background()
+//	shipmentID := uuid.New()
+//
+//	tests := []struct {
+//		name                   string
+//		mockSetup              func(m *RepositoryMock)
+//		expectedCount          int
+//		expectedErrorSubstring string
+//	}{
+//		{
+//			name: "Success",
+//			mockSetup: func(m *RepositoryMock) {
+//				m.SelectEventsMock.
+//					Expect(minimock.AnyContext, shipmentID).
+//					Return(
+//						[]shipmentrepository.SelectEventOutput{
+//							{ID: uuid.New(), ShipmentID: shipmentID, Status: models.ShipmentStatusPending},
+//							{ID: uuid.New(), ShipmentID: shipmentID, Status: models.ShipmentStatusAwaitingDriver},
+//						},
+//						nil,
+//					)
+//			},
+//			expectedCount: 2,
+//		},
+//		{
+//			name: "Error",
+//			mockSetup: func(m *RepositoryMock) {
+//				m.SelectEventsMock.
+//					Expect(minimock.AnyContext, shipmentID).
+//					Return(nil, errors.New("db error"))
+//			},
+//			expectedErrorSubstring: "s.shipmentRepository.SelectEvents: db error",
+//		},
+//	}
+//
+//	for _, tt := range tests {
+//		t.Run(tt.name, func(t *testing.T) {
+//			m := NewRepositoryMock(t)
+//			tt.mockSetup(m)
+//			service := New(m)
+//
+//			resp, err := service.GetShipmentEvents(ctx, shipmentID)
+//			if tt.expectedErrorSubstring != "" {
+//				require.ErrorContains(t, err, tt.expectedErrorSubstring)
+//			} else {
+//				require.NoError(t, err)
+//				require.Len(t, resp, tt.expectedCount)
+//			}
+//		})
+//	}
+//}
